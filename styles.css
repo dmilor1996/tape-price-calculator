@@ -70,8 +70,13 @@ h3 {
     background-color: #007BFF;
     padding: 5px 10px;
     font-size: 14px;
+    transition: background-color 0.5s ease; /* Добавляем плавный переход для цвета */
 }
 
 #copyButton:hover {
     background-color: #0056b3;
+}
+
+#copyButton.copied {
+    background-color: #28a745; /* Зеленый цвет при копировании */
 }
