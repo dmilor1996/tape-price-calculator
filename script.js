@@ -36,6 +36,18 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+// Функция для форматирования даты и времени
+function formatDateTime(timestamp) {
+    if (!timestamp) return "Неизвестно";
+    const date = timestamp.toDate();
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${day}.${month}.${year} ${hours}:${minutes}`;
+}
+
 // Функция для обновления списка размеров
 function updateWidthOptions() {
     const tapeType = document.getElementById("tapeType").value;
@@ -55,7 +67,7 @@ function updateWidthOptions() {
 
     widths.forEach(width => {
         const option = document.createElement("option");
-        option.value = width; // Исправлено: убрали некорректный символ
+        option.value = width;
         option.text = `${width} мм`;
         widthSelect.appendChild(option);
     });
@@ -85,7 +97,18 @@ async function loadHistory() {
         // Добавляем записи в список
         history.forEach((entry, index) => {
             const li = document.createElement("li");
-            li.textContent = `Расчет ${index + 1}: ${entry.tapeType}, ${entry.width} мм, ${entry.length} м, ${entry.totalPrice} рублей`;
+            const dateTime = formatDateTime(entry.timestamp);
+            li.textContent = `Расчет ${index + 1} (${dateTime}): ${entry.tapeType}, ${entry.width} мм, ${entry.length} м, ${entry.totalPrice} рублей`;
+            li.style.cursor = "pointer"; // Делаем элемент кликабельным
+            li.addEventListener("click", () => {
+                // При клике показываем детали расчета
+                const calculationText = `Тип ленты: ${entry.tapeType}, ширина: ${entry.width} мм, длина: ${entry.length} м\n` +
+                                       `Цена за 1 м = ${entry.totalPrice / entry.length} рублей\n` +
+                                       `Итоговая цена = ${entry.totalPrice / entry.length} * ${entry.length} = ${entry.totalPrice} рублей`;
+                document.getElementById("calculationText").innerText = calculationText;
+                document.getElementById("copyButton").style.display = "inline-block";
+                document.getElementById("result").innerText = `Итоговая цена: ${entry.totalPrice} рублей`;
+            });
             historyList.appendChild(li);
         });
     } catch (error) {
@@ -194,8 +217,23 @@ function copyCalculation() {
     });
 }
 
+// Функция для сворачивания/разворачивания истории
+function toggleHistory() {
+    const historyContent = document.getElementById("historyContent");
+    const toggleButton = document.getElementById("toggleHistoryButton");
+    if (historyContent.style.display === "none") {
+        historyContent.style.display = "block";
+        toggleButton.textContent = "Скрыть историю";
+    } else {
+        historyContent.style.display = "none";
+        toggleButton.textContent = "Показать историю";
+    }
+}
+
 // Инициализация списка размеров и истории при загрузке страницы
 window.onload = function() {
     updateWidthOptions();
     loadHistory();
+    // Изначально скрываем историю
+    document.getElementById("historyContent").style.display = "none";
 };
