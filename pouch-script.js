@@ -54,7 +54,7 @@ const pouchPrices = {
     "Пыльники из велюра": {
         "Лента с логотипом": {
             "7x9": { "50-199": 90, "200-499": 85, "500+": 80 },
-            "9x12": { "50-199": 100, "200-499": 95, "500+": 90 },
+            "9x12": { "50-199": 100, "200-499": 95, "500+: 90 },
             "12x18": { "50-199": 115, "200-499": 110, "500+": 105 }
         },
         "Термоперенос": {
@@ -316,7 +316,16 @@ function calculatePouchPrice() {
     const pouchType = document.getElementById("pouchType").value;
     const brandingType = document.getElementById("brandingType").value;
     const size = document.getElementById("size").value;
-    const quantity = parseInt(document.getElementById("quantity").value);
+    const quantityInput = document.getElementById("quantity").value;
+    const quantity = parseInt(quantityInput);
+
+    // Проверка, что количество введено корректно
+    if (isNaN(quantity) || quantity <= 0) {
+        document.getElementById("result").innerText = "Ошибка: введите корректное количество (положительное число).";
+        document.getElementById("calculationText").innerText = "";
+        document.getElementById("copyButton").style.display = "none";
+        return;
+    }
 
     // Проверка минимального количества
     const minQty = minQuantity[brandingType] || 50;
