@@ -54,3 +54,24 @@ h3 {
     margin-top: 20px;
     color: #333;
 }
+
+.calculation-details {
+    margin-top: 10px;
+    text-align: left;
+}
+
+.calculation-details p {
+    font-size: 14px;
+    color: #555;
+    margin: 0 0 10px 0;
+}
+
+#copyButton {
+    background-color: #007BFF;
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+#copyButton:hover {
+    background-color: #0056b3;
+}
