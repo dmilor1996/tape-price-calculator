@@ -31,7 +31,7 @@ const pouchPrices = {
         },
         "Штамп": {
             "8x10": { "100-199": 145, "200-499": 140, "500+": 122 },
-            "15x15": { "100-199": 165, "200-499": 160, "500+": 133 },
+            "15x15": { "100-199": 165, "200-499": 160, "500+: 133 },
             "25x25": { "100-199": 195, "200-499": 185, "500+": 155 },
             "40x40": { "100-199": 255, "200-499": 245, "500+": 205 }
         }
@@ -138,8 +138,24 @@ const minQuantity = {
     "Лента с логотипом": 50
 };
 
+// Инициализация Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyAdcTDguKECAJJTrsEOr-kuXIBEpcxhpuc",
+    authDomain: "tape-price-calculator.firebaseapp.com",
+    projectId: "tape-price-calculator",
+    storageBucket: "tape-price-calculator.firebasestorage.app",
+    messagingSenderId: "841180656652",
+    appId: "1:841180656652:web:ad4f256602e9d7de4eaa29"
+};
+
+// Инициализируем Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
 // Функция для форматирования даты и времени
-function formatDateTime(date) {
+function formatDateTime(timestamp) {
+    if (!timestamp) return "Неизвестно";
+    const date = timestamp.toDate();
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
@@ -188,62 +204,101 @@ function updateSizeOptions() {
     });
 }
 
-// Функция для загрузки истории расчетов из localStorage
-function loadHistory() {
+// Функция для загрузки истории расчетов из Firestore
+async function loadHistory() {
     const historyList = document.getElementById("historyList");
     const clearHistoryButton = document.getElementById("clearHistoryButton");
     historyList.innerHTML = "";
 
-    const history = JSON.parse(localStorage.getItem("pouchCalculations")) || [];
-    if (history.length === 0) {
-        clearHistoryButton.style.display = "none";
-        return;
-    }
+    try {
+        const snapshot = await db.collection("pouchCalculations").orderBy("timestamp", "desc").get();
+        const history = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-    clearHistoryButton.style.display = "inline-block";
-    history.forEach((entry, index) => {
-        const li = document.createElement("li");
-        const dateTime = entry.timestamp;
-        li.textContent = `${dateTime}: ${entry.pouchType}, ${entry.brandingType}, ${entry.size} см, ${entry.quantity} шт, ${entry.totalPrice} рублей`;
-        li.style.cursor = "pointer";
-        li.style.setProperty('--index', index);
-        li.addEventListener("click", () => {
-            const calculationText = `Название ленты: ${entry.pouchType}, брендирование: ${entry.brandingType}, размер: ${entry.size} см, количество: ${entry.quantity} шт\n` +
-                                   `Цена за 1 шт = ${entry.pricePerUnit} рублей\n` +
-                                   `Итоговая цена = ${entry.pricePerUnit} * ${entry.quantity} = ${entry.totalPrice} рублей`;
-            document.getElementById("calculationText").innerText = calculationText;
-            document.getElementById("copyButton").style.display = "inline-block";
-            document.getElementById("result").innerText = `Итоговая цена: ${entry.totalPrice} рублей`;
-            document.getElementById("result").classList.remove("fade-in");
-            document.getElementById("calculationDetails").classList.remove("fade-in");
-            void document.getElementById("result").offsetWidth;
-            void document.getElementById("calculationDetails").offsetWidth;
-            document.getElementById("result").classList.add("fade-in");
-            document.getElementById("calculationDetails").classList.add("fade-in");
+        // Если история пуста, скрываем кнопку "Очистить историю"
+        if (history.length === 0) {
+            clearHistoryButton.style.display = "none";
+            return;
+        }
+
+        // Показываем кнопку "Очистить историю"
+        clearHistoryButton.style.display = "inline-block";
+
+        // Добавляем записи в список
+        history.forEach((entry, index) => {
+            const li = document.createElement("li");
+            const dateTime = formatDateTime(entry.timestamp);
+            li.textContent = `${dateTime}: ${entry.pouchType}, ${entry.brandingType}, ${entry.size} см, ${entry.quantity} шт, ${entry.totalPrice} рублей`;
+            li.style.cursor = "pointer";
+            li.style.setProperty('--index', index);
+            li.addEventListener("click", () => {
+                const calculationText = `Название ленты: ${entry.pouchType}, брендирование: ${entry.brandingType}, размер: ${entry.size} см, количество: ${entry.quantity} шт\n` +
+                                       `Цена за 1 шт = ${entry.pricePerUnit} рублей\n` +
+                                       `Итоговая цена = ${entry.pricePerUnit} * ${entry.quantity} = ${entry.totalPrice} рублей`;
+                document.getElementById("calculationText").innerText = calculationText;
+                document.getElementById("copyButton").style.display = "inline-block";
+                document.getElementById("result").innerText = `Итоговая цена: ${entry.totalPrice} рублей`;
+                document.getElementById("result").classList.remove("fade-in");
+                document.getElementById("calculationDetails").classList.remove("fade-in");
+                void document.getElementById("result").offsetWidth;
+                void document.getElementById("calculationDetails").offsetWidth;
+                document.getElementById("result").classList.add("fade-in");
+                document.getElementById("calculationDetails").classList.add("fade-in");
+            });
+            historyList.appendChild(li);
         });
-        historyList.appendChild(li);
-    });
+    } catch (error) {
+        console.error("Ошибка при загрузке истории:", error);
+    }
 }
 
-// Функция для сохранения расчета в localStorage
-function saveToHistory(pouchType, brandingType, size, quantity, totalPrice, pricePerUnit) {
-    let history = JSON.parse(localStorage.getItem("pouchCalculations")) || [];
-    const timestamp = formatDateTime(new Date());
-    history.push({ pouchType, brandingType, size, quantity, totalPrice, pricePerUnit, timestamp });
+// Функция для сохранения расчета в Firestore с ограничением на 15 записей
+async function saveToHistory(pouchType, brandingType, size, quantity, totalPrice, pricePerUnit) {
+    try {
+        // Добавляем новую запись
+        await db.collection("pouchCalculations").add({
+            pouchType,
+            brandingType,
+            size,
+            quantity,
+            totalPrice,
+            pricePerUnit,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
 
-    // Ограничиваем историю до 15 записей
-    if (history.length > 15) {
-        history = history.slice(history.length - 15);
+        // Проверяем количество записей
+        const snapshot = await db.collection("pouchCalculations").orderBy("timestamp", "asc").get();
+        const totalRecords = snapshot.docs.length;
+
+        // Если записей больше 15, удаляем самые старые
+        if (totalRecords > 15) {
+            const recordsToDelete = totalRecords - 15;
+            const batch = db.batch();
+            snapshot.docs.slice(0, recordsToDelete).forEach(doc => {
+                batch.delete(doc.ref);
+            });
+            await batch.commit();
+        }
+
+        // Обновляем историю
+        loadHistory();
+    } catch (error) {
+        console.error("Ошибка при сохранении в Firestore:", error);
     }
-
-    localStorage.setItem("pouchCalculations", JSON.stringify(history));
-    loadHistory();
 }
 
 // Функция для очистки истории
-function clearHistory() {
-    localStorage.removeItem("pouchCalculations");
-    loadHistory();
+async function clearHistory() {
+    try {
+        const snapshot = await db.collection("pouchCalculations").get();
+        const batch = db.batch();
+        snapshot.docs.forEach(doc => {
+            batch.delete(doc.ref);
+        });
+        await batch.commit();
+        loadHistory();
+    } catch (error) {
+        console.error("Ошибка при очистке истории:", error);
+    }
 }
 
 // Функция для расчета цены
@@ -282,7 +337,7 @@ function calculatePouchPrice() {
     document.getElementById("result").innerText = `Итоговая цена: ${totalPrice} рублей`;
 
     // Формируем текст с логикой расчета
-    const calculationText = `Пыльник: ${pouchType}, брендирование: ${brandingType}, размер: ${size} см, количество: ${quantity} шт\n` +
+    const calculationText = `Пыльник: ${pouchType}, брендирование: ${entry.brandingType}, размер: ${size} см, количество: ${quantity} шт\n` +
                            `Цена за 1 шт = ${pricePerUnit} рублей\n` +
                            `Итоговая цена = ${pricePerUnit} * ${quantity} = ${totalPrice} рублей`;
 
@@ -297,7 +352,7 @@ function calculatePouchPrice() {
     document.getElementById("result").classList.add("fade-in");
     document.getElementById("calculationDetails").classList.add("fade-in");
 
-    // Сохраняем расчет в историю
+    // Сохраняем расчет в Firestore
     saveToHistory(pouchType, brandingType, size, quantity, totalPrice, pricePerUnit);
 }
 
