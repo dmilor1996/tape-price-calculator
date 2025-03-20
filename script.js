@@ -95,11 +95,12 @@ async function loadHistory() {
         clearHistoryButton.style.display = "inline-block";
 
         // Добавляем записи в список (без "Расчет 1,2,3...")
-        history.forEach((entry) => {
+        history.forEach((entry, index) => {
             const li = document.createElement("li");
             const dateTime = formatDateTime(entry.timestamp);
             li.textContent = `${dateTime}: ${entry.tapeType}, ${entry.width} мм, ${entry.length} м, ${entry.totalPrice} рублей`;
             li.style.cursor = "pointer"; // Делаем элемент кликабельным
+            li.style.setProperty('--index', index); // Устанавливаем индекс для анимации
             li.addEventListener("click", () => {
                 // При клике показываем детали расчета
                 const calculationText = `Тип ленты: ${entry.tapeType}, ширина: ${entry.width} мм, длина: ${entry.length} м\n` +
@@ -252,11 +253,13 @@ function copyCalculation() {
 function toggleHistory() {
     const historyContent = document.getElementById("historyContent");
     const toggleButton = document.getElementById("toggleHistoryButton");
-    if (historyContent.style.display === "none") {
-        historyContent.style.display = "block";
+    if (historyContent.classList.contains("collapsed")) {
+        historyContent.classList.remove("collapsed");
+        historyContent.classList.add("expanded");
         toggleButton.textContent = "Скрыть историю";
     } else {
-        historyContent.style.display = "none";
+        historyContent.classList.remove("expanded");
+        historyContent.classList.add("collapsed");
         toggleButton.textContent = "Показать историю";
     }
 }
@@ -266,5 +269,5 @@ window.onload = function() {
     updateWidthOptions();
     loadHistory();
     // Изначально скрываем историю
-    document.getElementById("historyContent").style.display = "none";
+    document.getElementById("historyContent").classList.add("collapsed");
 };
