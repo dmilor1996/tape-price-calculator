@@ -1,6 +1,6 @@
 // Данные о ценах
 const prices = {
-    "Президент": {
+       "Президент": {
         15: { "50 м": 45, "100 м": 40, "150 м": 40, "от 200 м": 35 },
         25: { "50 м": 55, "100 м": 50, "150 м": 50, "от 200 м": 45 },
     },
@@ -31,7 +31,13 @@ function updateWidthOptions() {
     widthSelect.innerHTML = "";
 
     // Добавляем новые опции в зависимости от типа ленты
-    availableWidths[tapeType].forEach(width => {
+    const widths = availableWidths[tapeType] || [];
+    if (widths.length === 0) {
+        console.error("Ошибка: размеры для типа ленты не найдены:", tapeType);
+        return;
+    }
+
+    widths.forEach(width => {
         const option = document.createElement("option");
         option.value = width;
         option.text = `${width} мм`;
