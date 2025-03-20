@@ -83,7 +83,7 @@ function calculatePrice() {
     // Отображаем результат
     document.getElementById("result").innerText = `Итоговая цена: ${totalPrice} рублей`;
 
-    // Формируем текст с логикой расчета
+    // Формируем текст с логикой расчета (без категории длины)
     const calculationText = `Тип ленты: ${tapeType}, ширина: ${width} мм, длина: ${length} м\n` +
                            `Цена за 1 м = ${pricePerMeter} рублей\n` +
                            `Итоговая цена = ${pricePerMeter} * ${length} = ${totalPrice} рублей`;
@@ -95,14 +95,22 @@ function calculatePrice() {
     document.getElementById("copyButton").style.display = "inline-block";
 }
 
-// Функция для копирования текста
+// Функция для копирования текста с визуальной обратной связью
 function copyCalculation() {
     const calculationText = document.getElementById("calculationText").innerText;
+    const copyButton = document.getElementById("copyButton");
+
+    // Копируем текст
     navigator.clipboard.writeText(calculationText).then(() => {
-        alert("Текст скопирован в буфер обмена!");
+        // Добавляем класс для изменения цвета кнопки
+        copyButton.classList.add("copied");
+
+        // Через 1 секунду убираем класс, чтобы цвет вернулся к исходному
+        setTimeout(() => {
+            copyButton.classList.remove("copied");
+        }, 1000);
     }).catch(err => {
         console.error("Ошибка при копировании:", err);
-        alert("Не удалось скопировать текст. Попробуйте скопировать вручную.");
     });
 }
 
