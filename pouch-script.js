@@ -138,7 +138,7 @@ const minQuantity = {
     "Лента с логотипом": 50
 };
 
-// Инициализация Firebase
+// Конфигурация Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyAdcTDguKECAJJTrsEOr-kuXIBEpcxhpuc",
     authDomain: "tape-price-calculator.firebaseapp.com",
@@ -148,8 +148,13 @@ const firebaseConfig = {
     appId: "1:841180656652:web:ad4f256602e9d7de4eaa29"
 };
 
-// Инициализируем Firebase
-firebase.initializeApp(firebaseConfig);
+// Инициализация Firebase
+if (typeof firebase === "undefined") {
+    console.error("Firebase не загружен. Проверьте подключение скриптов Firebase.");
+} else {
+    firebase.initializeApp(firebaseConfig);
+}
+
 const db = firebase.firestore();
 
 // Функция для форматирования даты и времени
