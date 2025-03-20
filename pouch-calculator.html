@@ -10,30 +10,24 @@
 <body>
     <div class="container">
         <h1>Калькулятор цен на мешочки</h1>
-        <form id="pouchPriceForm">
-            <label for="material" style="--order: 1;"><i class="fas fa-sack"></i> Материал:</label>
-            <select id="material" name="material" onchange="updateSizeOptions()" style="--order: 1;">
-                <option value="Хлопок">Хлопок</option>
-                <option value="Велюр">Велюр</option>
-                <option value="Фатин">Фатин</option>
-                <option value="Ветивер">Ветивер</option>
-                <option value="Саржа">Саржа</option>
-            </select><br><br>
-
-            <label for="size" style="--order: 2;"><i class="fas fa-ruler-combined"></i> Размер:</label>
-            <select id="size" name="size" style="--order: 2;">
+        <form id="priceForm">
+            <label for="pouchType" style="--order: 1;"><i class="fas fa-sack"></i> Название ленты:</label>
+            <select id="pouchType" name="pouchType" onchange="updateBrandingAndSizeOptions()" style="--order: 1;">
                 <!-- Опции будут добавлены через JavaScript -->
-            </select><br><br>
+            </select>
 
-            <label for="quantity" style="--order: 3;"><i class="fas fa-boxes"></i> Количество (шт.):</label>
-            <input type="number" id="quantity" name="quantity" min="1" required style="--order: 3;"><br><br>
+            <label for="brandingType" style="--order: 2;"><i class="fas fa-tag"></i> Тип брендирования:</label>
+            <select id="brandingType" name="brandingType" onchange="updateSizeOptions()" style="--order: 2;">
+                <!-- Опции будут добавлены через JavaScript -->
+            </select>
 
-            <label for="branding" style="--order: 4;"><i class="fas fa-stamp"></i> Брендирование (термопечать):</label>
-            <select id="branding" name="branding" style="--order: 4;">
-                <option value="Нет">Нет</option>
-                <option value="Классическая">Классическая</option>
-                <option value="Престиж">Престиж</option>
-            </select><br><br>
+            <label for="size" style="--order: 3;"><i class="fas fa-ruler-combined"></i> Размер (см):</label>
+            <select id="size" name="size" style="--order: 3;">
+                <!-- Опции будут добавлены через JavaScript -->
+            </select>
+
+            <label for="quantity" style="--order: 4;"><i class="fas fa-boxes"></i> Количество (шт):</label>
+            <input type="number" id="quantity" name="quantity" min="1" required style="--order: 4;"><br><br>
 
             <button type="button" onclick="calculatePouchPrice()">Рассчитать</button>
         </form>
@@ -44,6 +38,17 @@
             <button id="copyButton" onclick="copyCalculation()" style="display: none;">
                 <i class="fas fa-copy"></i> Копировать
             </button>
+        </div>
+
+        <div id="history" class="history">
+            <h3>
+                История расчетов
+                <button id="toggleHistoryButton" onclick="toggleHistory()">Показать историю</button>
+            </h3>
+            <div id="historyContent" class="collapsed">
+                <ul id="historyList"></ul>
+                <button id="clearHistoryButton" onclick="clearHistory()" style="display: none;">Очистить историю</button>
+            </div>
         </div>
     </div>
     <script src="pouch-script.js"></script>
