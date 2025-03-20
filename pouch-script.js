@@ -31,7 +31,7 @@ const pouchPrices = {
         },
         "Штамп": {
             "8x10": { "100-199": 145, "200-499": 140, "500+": 122 },
-            "15x15": { "100-199": 165, "200-499": 160, "500+: 133 },
+            "15x15": { "100-199": 165, "200-499": 160, "500+": 133 },
             "25x25": { "100-199": 195, "200-499": 185, "500+": 155 },
             "40x40": { "100-199": 255, "200-499": 245, "500+": 205 }
         }
@@ -54,7 +54,7 @@ const pouchPrices = {
     "Пыльники из велюра": {
         "Лента с логотипом": {
             "7x9": { "50-199": 90, "200-499": 85, "500+": 80 },
-            "9x12": { "50-199": 100, "200-499": 95, "500+: 90 },
+            "9x12": { "50-199": 100, "200-499": 95, "500+": 90 },
             "12x18": { "50-199": 115, "200-499": 110, "500+": 105 }
         },
         "Термоперенос": {
@@ -400,31 +400,4 @@ function toggleHistory() {
     } else {
         historyContent.classList.remove("expanded");
         historyContent.classList.add("collapsed");
-        toggleButton.textContent = "Показать историю";
-    }
-}
-
-// Инициализация при загрузке страницы
-window.onload = function() {
-    console.log("Страница загружена, инициализация начата");
-
-    // Инициализация типов лент
-    const pouchTypeSelect = document.getElementById("pouchType");
-    availablePouchTypes.forEach(type => {
-        const option = document.createElement("option");
-        option.value = type;
-        option.text = type;
-        pouchTypeSelect.appendChild(option);
-    });
-
-    // Инициализация брендирования и размеров
-    updateBrandingAndSizeOptions();
-
-    // Загрузка истории
-    loadHistory();
-
-    // Изначально скрываем историю
-    document.getElementById("historyContent").classList.add("collapsed");
-
-    console.log("Инициализация завершена");
-};
+        toggleButton.textContent = "Показ
