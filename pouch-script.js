@@ -400,4 +400,31 @@ function toggleHistory() {
     } else {
         historyContent.classList.remove("expanded");
         historyContent.classList.add("collapsed");
-        toggleButton.textContent = "Показ
+        toggleButton.textContent = "Показать историю";
+    }
+}
+
+// Инициализация при загрузке страницы
+window.onload = function() {
+    console.log("Страница загружена, инициализация начата");
+
+    // Инициализация типов лент
+    const pouchTypeSelect = document.getElementById("pouchType");
+    availablePouchTypes.forEach(type => {
+        const option = document.createElement("option");
+        option.value = type;
+        option.text = type;
+        pouchTypeSelect.appendChild(option);
+    });
+
+    // Инициализация брендирования и размеров
+    updateBrandingAndSizeOptions();
+
+    // Загрузка истории
+    loadHistory();
+
+    // Изначально скрываем историю
+    document.getElementById("historyContent").classList.add("collapsed");
+
+    console.log("Инициализация завершена");
+};
