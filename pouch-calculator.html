@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор цен на мешочки</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Калькулятор цен на мешочки</h1>
+        <form id="pouchPriceForm">
+            <label for="material" style="--order: 1;"><i class="fas fa-sack"></i> Материал:</label>
+            <select id="material" name="material" onchange="updateSizeOptions()" style="--order: 1;">
+                <option value="Хлопок">Хлопок</option>
+                <option value="Велюр">Велюр</option>
+            </select><br><br>
+
+            <label for="size" style="--order: 2;"><i class="fas fa-ruler-combined"></i> Размер:</label>
+            <select id="size" name="size" style="--order: 2;">
+                <!-- Опции будут добавлены через JavaScript -->
+            </select><br><br>
+
+            <label for="quantity" style="--order: 3;"><i class="fas fa-boxes"></i> Количество (шт.):</label>
+            <input type="number" id="quantity" name="quantity" min="1" required style="--order: 3;"><br><br>
+
+            <label for="branding" style="--order: 4;"><i class="fas fa-stamp"></i> Брендирование (термопечать):</label>
+            <select id="branding" name="branding" style="--order: 4;">
+                <option value="Нет">Нет</option>
+                <option value="Классическая">Классическая</option>
+                <option value="Престиж">Престиж</option>
+            </select><br><br>
+
+            <label for="ribbonColor" style="--order: 5;"><i class="fas fa-palette"></i> Цвет ленты на выбор:</label>
+            <select id="ribbonColor" name="ribbonColor" style="--order: 5;">
+                <option value="Нет">Нет</option>
+                <option value="Да">Да</option>
+            </select><br><br>
+
+            <label for="ribbonType" style="--order: 6;"><i class="fas fa-tape"></i> Замена ленты (репсовая/шнур):</label>
+            <select id="ribbonType" name="ribbonType" style="--order: 6;">
+                <option value="Нет">Нет</option>
+                <option value="Да">Да</option>
+            </select><br><br>
+
+            <label for="customSize" style="--order: 7;"><i class="fas fa-ruler"></i> Индивидуальный размер:</label>
+            <select id="customSize" name="customSize" style="--order: 7;">
+                <option value="Нет">Нет</option>
+                <option value="Да">Да</option>
+            </select><br><br>
+
+            <button type="button" onclick="calculatePouchPrice()">Рассчитать</button>
+        </form>
+
+        <h3 id="result">Итоговая цена: 0 рублей</h3>
+        <div id="calculationDetails" class="calculation-details">
+            <p id="calculationText"></p>
+            <button id="copyButton" onclick="copyCalculation()" style="display: none;">
+                <i class="fas fa-copy"></i> Копировать
+            </button>
+        </div>
+    </div>
+    <script src="pouch-script.js"></script>
+</body>
+</html>
