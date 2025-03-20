@@ -21,12 +21,15 @@ body {
 h1 {
     font-size: 24px;
     margin-bottom: 20px;
+    animation: slideInFromTop 0.5s ease-out;
 }
 
 label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
+    animation: fadeInFromLeft 0.5s ease-out;
+    animation-delay: calc(0.1s * var(--order));
 }
 
 label i {
@@ -40,11 +43,13 @@ select, input {
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    -webkit-appearance: none; /* Убираем нативный стиль на мобильных */
+    -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    background: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 8px center; /* Добавляем кастомную стрелку */
+    background: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 8px center;
     background-size: 16px;
+    animation: fadeInFromRight 0.5s ease-out;
+    animation-delay: calc(0.1s * var(--order));
 }
 
 button {
@@ -54,10 +59,15 @@ button {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    transition: transform 0.2s ease;
 }
 
 button:hover {
-    background-color: #45a049;
+    animation: pulse 0.5s infinite;
+}
+
+button:active {
+    transform: scale(0.95);
 }
 
 h3 {
@@ -93,7 +103,7 @@ h3 {
     background-color: #007BFF;
     padding: 5px 10px;
     font-size: 14px;
-    transition: background-color 0.5s ease;
+    transition: transform 0.2s ease;
 }
 
 #copyButton:hover {
@@ -102,6 +112,8 @@ h3 {
 
 #copyButton.copied {
     background-color: #28a745;
+    animation: flash 0.5s ease;
+    transform: scale(1.1);
 }
 
 .history {
@@ -114,12 +126,27 @@ h3 {
     margin-bottom: 10px;
 }
 
+#historyContent {
+    transition: max-height 0.5s ease, opacity 0.5s ease;
+    overflow: hidden;
+}
+
+#historyContent.collapsed {
+    max-height: 0;
+    opacity: 0;
+}
+
+#historyContent.expanded {
+    max-height: 300px; /* Устанавливаем максимальную высоту для плавного раскрытия */
+    opacity: 1;
+}
+
 .history ul {
     list-style: none;
     padding: 0;
     margin: 0 0 10px 0;
-    max-height: 200px; /* Ограничиваем высоту списка */
-    overflow-y: auto; /* Добавляем прокрутку, если записей много */
+    max-height: 200px;
+    overflow-y: auto;
 }
 
 .history li {
@@ -127,11 +154,13 @@ h3 {
     color: #555;
     padding: 5px 0;
     border-bottom: 1px solid #eee;
-    cursor: pointer; /* Указываем, что элемент кликабельный */
+    cursor: pointer;
+    animation: slideInFromLeft 0.5s ease-out;
+    animation-delay: calc(0.05s * var(--index));
 }
 
 .history li:hover {
-    background-color: #f0f0f0; /* Подсветка при наведении */
+    background-color: #f0f0f0;
 }
 
 #clearHistoryButton {
@@ -144,7 +173,86 @@ h3 {
     background-color: #c82333;
 }
 
-/* Анимация для плавного появления */
+/* Анимация для заголовка */
+@keyframes slideInFromTop {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Анимация для элементов формы (слева) */
+@keyframes fadeInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Анимация для элементов формы (справа) */
+@keyframes fadeInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Анимация для кнопки "Рассчитать" */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+    }
+    70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+    }
+}
+
+/* Анимация для кнопки "Копировать" */
+@keyframes flash {
+    0% {
+        background-color: #007BFF;
+    }
+    50% {
+        background-color: #28a745;
+        transform: scale(1.2);
+    }
+    100% {
+        background-color: #28a745;
+        transform: scale(1.1);
+    }
+}
+
+/* Анимация для записей истории */
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Анимация для результата и деталей */
 .fade-in {
     animation: fadeIn 0.5s ease-in;
 }
