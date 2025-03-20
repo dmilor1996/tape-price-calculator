@@ -47,6 +47,46 @@ function updateWidthOptions() {
     });
 }
 
+// Функция для загрузки истории расчетов из localStorage
+function loadHistory() {
+    const historyList = document.getElementById("historyList");
+    const clearHistoryButton = document.getElementById("clearHistoryButton");
+    const history = JSON.parse(localStorage.getItem("calculationHistory")) || [];
+
+    // Очищаем текущий список
+    historyList.innerHTML = "";
+
+    // Если история пуста, скрываем кнопку "Очистить историю"
+    if (history.length === 0) {
+        clearHistoryButton.style.display = "none";
+        return;
+    }
+
+    // Показываем кнопку "Очистить историю"
+    clearHistoryButton.style.display = "inline-block";
+
+    // Добавляем записи в список
+    history.forEach((entry, index) => {
+        const li = document.createElement("li");
+        li.textContent = `Расчет ${index + 1}: ${entry.tapeType}, ${entry.width} мм, ${entry.length} м, ${entry.totalPrice} рублей`;
+        historyList.appendChild(li);
+    });
+}
+
+// Функция для сохранения расчета в историю
+function saveToHistory(tapeType, width, length, totalPrice) {
+    const history = JSON.parse(localStorage.getItem("calculationHistory")) || [];
+    history.push({ tapeType, width, length, totalPrice });
+    localStorage.setItem("calculationHistory", JSON.stringify(history));
+    loadHistory();
+}
+
+// Функция для очистки истории
+function clearHistory() {
+    localStorage.removeItem("calculationHistory");
+    loadHistory();
+}
+
 // Функция для расчета цены
 function calculatePrice() {
     // Получаем значения из формы
@@ -93,6 +133,9 @@ function calculatePrice() {
 
     // Показываем кнопку "Копировать"
     document.getElementById("copyButton").style.display = "inline-block";
+
+    // Сохраняем расчет в историю
+    saveToHistory(tapeType, width, length, totalPrice);
 }
 
 // Функция для копирования текста с визуальной обратной связью
@@ -114,7 +157,8 @@ function copyCalculation() {
     });
 }
 
-// Инициализация списка размеров при загрузке страницы
+// Инициализация списка размеров и истории при загрузке страницы
 window.onload = function() {
     updateWidthOptions();
+    loadHistory();
 };
