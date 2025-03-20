@@ -57,6 +57,8 @@ function calculatePrice() {
     // Проверка минимального заказа
     if (length < 50) {
         document.getElementById("result").innerText = "Ошибка: минимальный заказ — 50 метров.";
+        document.getElementById("calculationText").innerText = "";
+        document.getElementById("copyButton").style.display = "none";
         return;
     }
 
@@ -80,6 +82,29 @@ function calculatePrice() {
 
     // Отображаем результат
     document.getElementById("result").innerText = `Итоговая цена: ${totalPrice} рублей`;
+
+    // Формируем текст с логикой расчета
+    const calculationText = `Тип ленты: ${tapeType}, ширина: ${width} мм, длина: ${length} м\n` +
+                           `Категория длины: ${lengthCategory}\n` +
+                           `Цена за 1 м = ${pricePerMeter} рублей\n` +
+                           `Итоговая цена = ${pricePerMeter} * ${length} = ${totalPrice} рублей`;
+
+    // Отображаем логику расчета
+    document.getElementById("calculationText").innerText = calculationText;
+
+    // Показываем кнопку "Копировать"
+    document.getElementById("copyButton").style.display = "inline-block";
+}
+
+// Функция для копирования текста
+function copyCalculation() {
+    const calculationText = document.getElementById("calculationText").innerText;
+    navigator.clipboard.writeText(calculationText).then(() => {
+        alert("Текст скопирован в буфер обмена!");
+    }).catch(err => {
+        console.error("Ошибка при копировании:", err);
+        alert("Не удалось скопировать текст. Попробуйте скопировать вручную.");
+    });
 }
 
 // Инициализация списка размеров при загрузке страницы
