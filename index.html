@@ -5,23 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Калькулятор цен на ленту</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Подключаем Font Awesome для иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
         <h1>Калькулятор цен на ленту</h1>
         <form id="priceForm">
-            <label for="tapeType">Тип ленты:</label>
+            <label for="tapeType"><i class="fas fa-tape"></i> Тип ленты:</label>
             <select id="tapeType" name="tapeType" onchange="updateWidthOptions()">
                 <option value="Президент">Президент</option>
                 <option value="Классическая">Классическая</option>
             </select><br><br>
 
-            <label for="width">Ширина (мм):</label>
+            <label for="width"><i class="fas fa-ruler-horizontal"></i> Ширина (мм):</label>
             <select id="width" name="width">
                 <!-- Опции будут добавлены через JavaScript -->
             </select><br><br>
 
-            <label for="length">Длина (м):</label>
+            <label for="length"><i class="fas fa-ruler"></i> Длина (м):</label>
             <input type="number" id="length" name="length" min="1" required><br><br>
 
             <button type="button" onclick="calculatePrice()">Рассчитать</button>
@@ -30,7 +32,16 @@
         <h3 id="result">Итоговая цена: 0 рублей</h3>
         <div id="calculationDetails" class="calculation-details">
             <p id="calculationText"></p>
-            <button id="copyButton" onclick="copyCalculation()" style="display: none;">Копировать</button>
+            <button id="copyButton" onclick="copyCalculation()" style="display: none;">
+                <i class="fas fa-copy"></i> Копировать
+            </button>
+        </div>
+
+        <!-- Блок для истории расчетов -->
+        <div id="history" class="history">
+            <h3>История расчетов</h3>
+            <ul id="historyList"></ul>
+            <button id="clearHistoryButton" onclick="clearHistory()" style="display: none;">Очистить историю</button>
         </div>
     </div>
     <script src="script.js"></script>
