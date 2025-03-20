@@ -42,9 +42,14 @@
 
         <!-- Блок для истории расчетов -->
         <div id="history" class="history">
-            <h3>История расчетов</h3>
-            <ul id="historyList"></ul>
-            <button id="clearHistoryButton" onclick="clearHistory()" style="display: none;">Очистить историю</button>
+            <h3>
+                История расчетов
+                <button id="toggleHistoryButton" onclick="toggleHistory()">Показать историю</button>
+            </h3>
+            <div id="historyContent">
+                <ul id="historyList"></ul>
+                <button id="clearHistoryButton" onclick="clearHistory()" style="display: none;">Очистить историю</button>
+            </div>
         </div>
     </div>
     <script src="script.js"></script>
