@@ -22,6 +22,21 @@ const availableWidths = {
     "Классическая": [10, 15, 20, 25, 30, 40, 50, 60]
 };
 
+// Инициализация Firebase
+const firebaseConfig = {
+    // Вставьте сюда вашу конфигурацию Firebase из консоли
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+
+// Инициализируем Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
 // Функция для обновления списка размеров
 function updateWidthOptions() {
     const tapeType = document.getElementById("tapeType").value;
@@ -47,44 +62,67 @@ function updateWidthOptions() {
     });
 }
 
-// Функция для загрузки истории расчетов из localStorage
-function loadHistory() {
+// Функция для загрузки истории расчетов из Firestore
+async function loadHistory() {
     const historyList = document.getElementById("historyList");
     const clearHistoryButton = document.getElementById("clearHistoryButton");
-    const history = JSON.parse(localStorage.getItem("calculationHistory")) || [];
 
     // Очищаем текущий список
     historyList.innerHTML = "";
 
-    // Если история пуста, скрываем кнопку "Очистить историю"
-    if (history.length === 0) {
-        clearHistoryButton.style.display = "none";
-        return;
+    try {
+        const snapshot = await db.collection("calculations").orderBy("timestamp", "desc").get();
+        const history = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        // Если история пуста, скрываем кнопку "Очистить историю"
+        if (history.length === 0) {
+            clearHistoryButton.style.display = "none";
+            return;
+        }
+
+        // Показываем кнопку "Очистить историю"
+        clearHistoryButton.style.display = "inline-block";
+
+        // Добавляем записи в список
+        history.forEach((entry, index) => {
+            const li = document.createElement("li");
+            li.textContent = `Расчет ${index + 1}: ${entry.tapeType}, ${entry.width} мм, ${entry.length} м, ${entry.totalPrice} рублей`;
+            historyList.appendChild(li);
+        });
+    } catch (error) {
+        console.error("Ошибка при загрузке истории:", error);
     }
-
-    // Показываем кнопку "Очистить историю"
-    clearHistoryButton.style.display = "inline-block";
-
-    // Добавляем записи в список
-    history.forEach((entry, index) => {
-        const li = document.createElement("li");
-        li.textContent = `Расчет ${index + 1}: ${entry.tapeType}, ${entry.width} мм, ${entry.length} м, ${entry.totalPrice} рублей`;
-        historyList.appendChild(li);
-    });
 }
 
-// Функция для сохранения расчета в историю
-function saveToHistory(tapeType, width, length, totalPrice) {
-    const history = JSON.parse(localStorage.getItem("calculationHistory")) || [];
-    history.push({ tapeType, width, length, totalPrice });
-    localStorage.setItem("calculationHistory", JSON.stringify(history));
-    loadHistory();
+// Функция для сохранения расчета в Firestore
+async function saveToHistory(tapeType, width, length, totalPrice) {
+    try {
+        await db.collection("calculations").add({
+            tapeType,
+            width,
+            length,
+            totalPrice,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        loadHistory();
+    } catch (error) {
+        console.error("Ошибка при сохранении в Firestore:", error);
+    }
 }
 
 // Функция для очистки истории
-function clearHistory() {
-    localStorage.removeItem("calculationHistory");
-    loadHistory();
+async function clearHistory() {
+    try {
+        const snapshot = await db.collection("calculations").get();
+        const batch = db.batch();
+        snapshot.docs.forEach(doc => {
+            batch.delete(doc.ref);
+        });
+        await batch.commit();
+        loadHistory();
+    } catch (error) {
+        console.error("Ошибка при очистке истории:", error);
+    }
 }
 
 // Функция для расчета цены
@@ -134,7 +172,7 @@ function calculatePrice() {
     // Показываем кнопку "Копировать"
     document.getElementById("copyButton").style.display = "inline-block";
 
-    // Сохраняем расчет в историю
+    // Сохраняем расчет в Firestore
     saveToHistory(tapeType, width, length, totalPrice);
 }
 
