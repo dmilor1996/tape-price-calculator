@@ -40,6 +40,11 @@ select, input {
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    -webkit-appearance: none; /* Убираем нативный стиль на мобильных */
+    -moz-appearance: none;
+    appearance: none;
+    background: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 8px center; /* Добавляем кастомную стрелку */
+    background-size: 16px;
 }
 
 button {
@@ -137,4 +142,20 @@ h3 {
 
 #clearHistoryButton:hover {
     background-color: #c82333;
+}
+
+/* Анимация для плавного появления */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
