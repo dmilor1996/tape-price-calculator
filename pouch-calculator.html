@@ -5,52 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Калькулятор цен на мешочки</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Подключение Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore-compat.js"></script>
+    <!-- Подключение скрипта -->
+    <script src="pouch-script.js"></script>
 </head>
 <body>
-    <div class="container">
+    <div class="calculator">
         <h1>Калькулятор цен на мешочки</h1>
-        <form id="priceForm">
-            <label for="pouchType" style="--order: 1;"><i class="fas fa-sack"></i> Название ленты:</label>
-            <select id="pouchType" name="pouchType" onchange="updateBrandingAndSizeOptions()" style="--order: 1;">
-                <!-- Опции будут добавлены через JavaScript -->
-            </select>
+        <label>Название ленты:</label>
+        <select id="pouchType" onchange="updateBrandingAndSizeOptions()"></select>
 
-            <label for="brandingType" style="--order: 2;"><i class="fas fa-tag"></i> Тип брендирования:</label>
-            <select id="brandingType" name="brandingType" onchange="updateSizeOptions()" style="--order: 2;">
-                <!-- Опции будут добавлены через JavaScript -->
-            </select>
+        <label>Тип брендирования:</label>
+        <select id="brandingType" onchange="updateSizeOptions()"></select>
 
-            <label for="size" style="--order: 3;"><i class="fas fa-ruler-combined"></i> Размер (см):</label>
-            <select id="size" name="size" style="--order: 3;">
-                <!-- Опции будут добавлены через JavaScript -->
-            </select>
+        <label>Размер (см):</label>
+        <select id="size"></select>
 
-            <label for="quantity" style="--order: 4;"><i class="fas fa-boxes"></i> Количество (шт):</label>
-            <input type="number" id="quantity" name="quantity" min="1" required style="--order: 4;"><br><br>
+        <label>Количество (шт):</label>
+        <input type="number" id="quantity" value="0">
 
-            <button type="button" onclick="calculatePouchPrice()">Рассчитать</button>
-        </form>
+        <button type="button" onclick="calculatePouchPrice()">Рассчитать</button>
 
-        <h3 id="result">Итоговая цена: 0 рублей</h3>
+        <p id="result">Итоговая цена: 0 рублей</p>
+
         <div id="calculationDetails" class="calculation-details">
-            <p id="calculationText"></p>
-            <button id="copyButton" onclick="copyCalculation()" style="display: none;">
-                <i class="fas fa-copy"></i> Копировать
-            </button>
+            <pre id="calculationText"></pre>
+            <button id="copyButton" onclick="copyCalculation()">Копировать</button>
         </div>
 
-        <div id="history" class="history">
-            <h3>
-                История расчетов
-                <button id="toggleHistoryButton" onclick="toggleHistory()">Показать историю</button>
-            </h3>
-            <div id="historyContent" class="collapsed">
+        <div id="history">
+            <button id="toggleHistoryButton" onclick="toggleHistory()">Показать историю</button>
+            <button id="clearHistoryButton" onclick="clearHistory()">Очистить историю</button>
+            <div id="historyContent">
                 <ul id="historyList"></ul>
-                <button id="clearHistoryButton" onclick="clearHistory()" style="display: none;">Очистить историю</button>
             </div>
         </div>
     </div>
-    <script src="pouch-script.js"></script>
 </body>
 </html>
