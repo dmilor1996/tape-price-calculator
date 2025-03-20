@@ -24,6 +24,33 @@ h1 {
     animation: slideInFromTop 0.5s ease-out;
 }
 
+.calculator-selection {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.calculator-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #4CAF50;
+    color: white;
+    padding: 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 18px;
+    transition: background-color 0.3s;
+}
+
+.calculator-button i {
+    margin-right: 10px;
+}
+
+.calculator-button:hover {
+    background-color: #45a049;
+}
+
 label {
     display: block;
     margin-bottom: 5px;
