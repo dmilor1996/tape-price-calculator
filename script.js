@@ -24,13 +24,12 @@ const availableWidths = {
 
 // Инициализация Firebase
 const firebaseConfig = {
-    // Вставьте сюда вашу конфигурацию Firebase из консоли
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyAdcTDguKECAJJTrsEOr-kuXIBEpcxhpuc",
+  authDomain: "tape-price-calculator.firebaseapp.com",
+  projectId: "tape-price-calculator",
+  storageBucket: "tape-price-calculator.firebasestorage.app",
+  messagingSenderId: "841180656652",
+  appId: "1:841180656652:web:ad4f256602e9d7de4eaa29"
 };
 
 // Инициализируем Firebase
@@ -137,66 +136,4 @@ function calculatePrice() {
         document.getElementById("result").innerText = "Ошибка: минимальный заказ — 50 метров.";
         document.getElementById("calculationText").innerText = "";
         document.getElementById("copyButton").style.display = "none";
-        return;
-    }
-
-    // Определяем категорию длины рулона
-    let lengthCategory;
-    if (length <= 50) {
-        lengthCategory = "50 м";
-    } else if (length <= 100) {
-        lengthCategory = "100 м";
-    } else if (length <= 150) {
-        lengthCategory = "150 м";
-    } else {
-        lengthCategory = "от 200 м";
-    }
-
-    // Получаем цену за 1 метр
-    const pricePerMeter = prices[tapeType][width][lengthCategory];
-
-    // Рассчитываем итоговую цену
-    const totalPrice = pricePerMeter * length;
-
-    // Отображаем результат
-    document.getElementById("result").innerText = `Итоговая цена: ${totalPrice} рублей`;
-
-    // Формируем текст с логикой расчета (без категории длины)
-    const calculationText = `Тип ленты: ${tapeType}, ширина: ${width} мм, длина: ${length} м\n` +
-                           `Цена за 1 м = ${pricePerMeter} рублей\n` +
-                           `Итоговая цена = ${pricePerMeter} * ${length} = ${totalPrice} рублей`;
-
-    // Отображаем логику расчета
-    document.getElementById("calculationText").innerText = calculationText;
-
-    // Показываем кнопку "Копировать"
-    document.getElementById("copyButton").style.display = "inline-block";
-
-    // Сохраняем расчет в Firestore
-    saveToHistory(tapeType, width, length, totalPrice);
-}
-
-// Функция для копирования текста с визуальной обратной связью
-function copyCalculation() {
-    const calculationText = document.getElementById("calculationText").innerText;
-    const copyButton = document.getElementById("copyButton");
-
-    // Копируем текст
-    navigator.clipboard.writeText(calculationText).then(() => {
-        // Добавляем класс для изменения цвета кнопки
-        copyButton.classList.add("copied");
-
-        // Через 1 секунду убираем класс, чтобы цвет вернулся к исходному
-        setTimeout(() => {
-            copyButton.classList.remove("copied");
-        }, 1000);
-    }).catch(err => {
-        console.error("Ошибка при копировании:", err);
-    });
-}
-
-// Инициализация списка размеров и истории при загрузке страницы
-window.onload = function() {
-    updateWidthOptions();
-    loadHistory();
-};
+        return
