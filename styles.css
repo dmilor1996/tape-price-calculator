@@ -58,6 +58,19 @@ button:hover {
 h3 {
     margin-top: 20px;
     color: #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#toggleHistoryButton {
+    background-color: #007BFF;
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+#toggleHistoryButton:hover {
+    background-color: #0056b3;
 }
 
 .calculation-details {
@@ -100,6 +113,8 @@ h3 {
     list-style: none;
     padding: 0;
     margin: 0 0 10px 0;
+    max-height: 200px; /* Ограничиваем высоту списка */
+    overflow-y: auto; /* Добавляем прокрутку, если записей много */
 }
 
 .history li {
@@ -107,6 +122,11 @@ h3 {
     color: #555;
     padding: 5px 0;
     border-bottom: 1px solid #eee;
+    cursor: pointer; /* Указываем, что элемент кликабельный */
+}
+
+.history li:hover {
+    background-color: #f0f0f0; /* Подсветка при наведении */
 }
 
 #clearHistoryButton {
