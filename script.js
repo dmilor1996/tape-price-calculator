@@ -85,7 +85,7 @@ function calculatePrice() {
 
     // Формируем текст с логикой расчета
     const calculationText = `Тип ленты: ${tapeType}, ширина: ${width} мм, длина: ${length} м\n` +
-                           `Категория длины: ${lengthCategory}\n` +
+                           `Длина: ${lengthCategory}\n` +
                            `Цена за 1 м = ${pricePerMeter} рублей\n` +
                            `Итоговая цена = ${pricePerMeter} * ${length} = ${totalPrice} рублей`;
 
