@@ -11,21 +11,14 @@
         <h1>Калькулятор цен на ленту</h1>
         <form id="priceForm">
             <label for="tapeType">Тип ленты:</label>
-            <select id="tapeType" name="tapeType">
+            <select id="tapeType" name="tapeType" onchange="updateWidthOptions()">
                 <option value="Президент">Президент</option>
                 <option value="Классическая">Классическая</option>
             </select><br><br>
 
             <label for="width">Ширина (мм):</label>
             <select id="width" name="width">
-                <option value="10">10 мм</option>
-                <option value="15">15 мм</option>
-                <option value="20">20 мм</option>
-                <option value="25">25 мм</option>
-                <option value="30">30 мм</option>
-                <option value="40">40 мм</option>
-                <option value="50">50 мм</option>
-                <option value="60">60 мм</option>
+                <!-- Опции будут добавлены через JavaScript -->
             </select><br><br>
 
             <label for="length">Длина (м):</label>
