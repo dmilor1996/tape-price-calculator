@@ -248,6 +248,12 @@ async function loadHistory() {
         });
     } catch (error) {
         console.error("Ошибка при загрузке истории:", error);
+        // Показываем уведомление пользователю
+        const historySection = document.getElementById("history");
+        const errorMessage = document.createElement("p");
+        errorMessage.style.color = "red";
+        errorMessage.textContent = "Не удалось загрузить историю. Проверьте подключение к интернету.";
+        historySection.appendChild(errorMessage);
     }
 }
 
@@ -283,6 +289,8 @@ async function saveToHistory(pouchType, brandingType, size, quantity, totalPrice
         loadHistory();
     } catch (error) {
         console.error("Ошибка при сохранении в Firestore:", error);
+        // Показываем уведомление пользователю
+        document.getElementById("result").innerText = "Ошибка: не удалось сохранить расчет. Проверьте подключение к интернету.";
     }
 }
 
@@ -298,6 +306,8 @@ async function clearHistory() {
         loadHistory();
     } catch (error) {
         console.error("Ошибка при очистке истории:", error);
+        // Показываем уведомление пользователю
+        document.getElementById("result").innerText = "Ошибка: не удалось очистить историю. Проверьте подключение к интернету.";
     }
 }
 
@@ -337,7 +347,7 @@ function calculatePouchPrice() {
     document.getElementById("result").innerText = `Итоговая цена: ${totalPrice} рублей`;
 
     // Формируем текст с логикой расчета
-    const calculationText = `Пыльник: ${pouchType}, брендирование: ${entry.brandingType}, размер: ${size} см, количество: ${quantity} шт\n` +
+    const calculationText = `Название ленты: ${pouchType}, брендирование: ${brandingType}, размер: ${size} см, количество: ${quantity} шт\n` +
                            `Цена за 1 шт = ${pricePerUnit} рублей\n` +
                            `Итоговая цена = ${pricePerUnit} * ${quantity} = ${totalPrice} рублей`;
 
@@ -387,6 +397,8 @@ function toggleHistory() {
 
 // Инициализация при загрузке страницы
 window.onload = function() {
+    console.log("Страница загружена, инициализация начата");
+
     // Инициализация типов лент
     const pouchTypeSelect = document.getElementById("pouchType");
     availablePouchTypes.forEach(type => {
@@ -404,4 +416,6 @@ window.onload = function() {
 
     // Изначально скрываем историю
     document.getElementById("historyContent").classList.add("collapsed");
+
+    console.log("Инициализация завершена");
 };
