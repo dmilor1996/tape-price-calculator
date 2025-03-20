@@ -94,11 +94,11 @@ async function loadHistory() {
         // Показываем кнопку "Очистить историю"
         clearHistoryButton.style.display = "inline-block";
 
-        // Добавляем записи в список
-        history.forEach((entry, index) => {
+        // Добавляем записи в список (без "Расчет 1,2,3...")
+        history.forEach((entry) => {
             const li = document.createElement("li");
             const dateTime = formatDateTime(entry.timestamp);
-            li.textContent = `Расчет ${index + 1} (${dateTime}): ${entry.tapeType}, ${entry.width} мм, ${entry.length} м, ${entry.totalPrice} рублей`;
+            li.textContent = `${dateTime}: ${entry.tapeType}, ${entry.width} мм, ${entry.length} м, ${entry.totalPrice} рублей`;
             li.style.cursor = "pointer"; // Делаем элемент кликабельным
             li.addEventListener("click", () => {
                 // При клике показываем детали расчета
@@ -108,6 +108,13 @@ async function loadHistory() {
                 document.getElementById("calculationText").innerText = calculationText;
                 document.getElementById("copyButton").style.display = "inline-block";
                 document.getElementById("result").innerText = `Итоговая цена: ${entry.totalPrice} рублей`;
+                // Запускаем анимацию
+                document.getElementById("result").classList.remove("fade-in");
+                document.getElementById("calculationDetails").classList.remove("fade-in");
+                void document.getElementById("result").offsetWidth; // Перезапускаем анимацию
+                void document.getElementById("calculationDetails").offsetWidth; // Перезапускаем анимацию
+                document.getElementById("result").classList.add("fade-in");
+                document.getElementById("calculationDetails").classList.add("fade-in");
             });
             historyList.appendChild(li);
         });
@@ -116,9 +123,10 @@ async function loadHistory() {
     }
 }
 
-// Функция для сохранения расчета в Firestore
+// Функция для сохранения расчета в Firestore с ограничением на 15 записей
 async function saveToHistory(tapeType, width, length, totalPrice) {
     try {
+        // Добавляем новую запись
         await db.collection("calculations").add({
             tapeType,
             width,
@@ -126,6 +134,21 @@ async function saveToHistory(tapeType, width, length, totalPrice) {
             totalPrice,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
+
+        // Проверяем количество записей
+        const snapshot = await db.collection("calculations").orderBy("timestamp", "asc").get();
+        const totalRecords = snapshot.docs.length;
+
+        // Если записей больше 15, удаляем самые старые
+        if (totalRecords > 15) {
+            const recordsToDelete = totalRecords - 15;
+            const batch = db.batch();
+            snapshot.docs.slice(0, recordsToDelete).forEach(doc => {
+                batch.delete(doc.ref);
+            });
+            await batch.commit();
+        }
+
         loadHistory();
     } catch (error) {
         console.error("Ошибка при сохранении в Firestore:", error);
@@ -193,6 +216,14 @@ function calculatePrice() {
 
     // Показываем кнопку "Копировать"
     document.getElementById("copyButton").style.display = "inline-block";
+
+    // Запускаем анимацию
+    document.getElementById("result").classList.remove("fade-in");
+    document.getElementById("calculationDetails").classList.remove("fade-in");
+    void document.getElementById("result").offsetWidth; // Перезапускаем анимацию
+    void document.getElementById("calculationDetails").offsetWidth; // Перезапускаем анимацию
+    document.getElementById("result").classList.add("fade-in");
+    document.getElementById("calculationDetails").classList.add("fade-in");
 
     // Сохраняем расчет в Firestore
     saveToHistory(tapeType, width, length, totalPrice);
