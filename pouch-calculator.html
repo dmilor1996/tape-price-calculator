@@ -6,7 +6,7 @@
     <title>Калькулятор цен на мешочки</title>
     <link rel="stylesheet" href="styles.css">
     <!-- Подключение Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Подключение Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -14,37 +14,37 @@
 <body>
     <div class="container">
         <h1>Калькулятор цен на мешочки</h1>
-        <label style="--order: 1;"><i class="fas fa-tape"></i>Название ленты:</label>
-        <select id="pouchType" style="--order: 1;" onchange="updateBrandingAndSizeOptions()"></select>
+        <label style="--order: 1;"><i class="fas fa-tape"></i> Название ленты:</label>
+        <select id="pouchType" style="--order: 1;" onchange="updateBrandingAndSizeOptions()"></select><br><br>
 
-        <label style="--order: 2;"><i class="fas fa-stamp"></i>Тип брендирования:</label>
-        <select id="brandingType" style="--order: 2;" onchange="updateSizeOptions()"></select>
+        <label style="--order: 2;"><i class="fas fa-stamp"></i> Тип брендирования:</label>
+        <select id="brandingType" style="--order: 2;" onchange="updateSizeOptions()"></select><br><br>
 
-        <label style="--order: 3;"><i class="fas fa-ruler"></i>Размер (см):</label>
-        <select id="size" style="--order: 3;"></select>
+        <label style="--order: 3;"><i class="fas fa-ruler"></i> Размер (см):</label>
+        <select id="size" style="--order: 3;"></select><br><br>
 
-        <label style="--order: 4;"><i class="fas fa-boxes"></i>Количество (шт):</label>
-        <input type="number" id="quantity" value="0" style="--order: 4;">
+        <label style="--order: 4;"><i class="fas fa-boxes"></i> Количество (шт):</label>
+        <input type="number" id="quantity" value="0" style="--order: 4;" min="1" required><br><br>
 
         <button type="button" onclick="calculatePouchPrice()">Рассчитать</button>
 
-        <p id="result">Итоговая цена: 0 рублей</p>
+        <h3 id="result">Итоговая цена: 0 рублей</h3>
 
         <div id="calculationDetails" class="calculation-details">
-            <pre id="calculationText"></pre>
-            <button id="copyButton" onclick="copyCalculation()">Копировать</button>
+            <p id="calculationText"></p>
+            <button id="copyButton" onclick="copyCalculation()" style="display: none;">
+                <i class="fas fa-copy"></i> Копировать
+            </button>
         </div>
 
         <div id="history">
             <h3>
                 История расчетов
-                <div>
-                    <button id="toggleHistoryButton" onclick="toggleHistory()">Показать историю</button>
-                    <button id="clearHistoryButton" onclick="clearHistory()">Очистить историю</button>
-                </div>
+                <button id="toggleHistoryButton" onclick="toggleHistory()">Показать историю</button>
             </h3>
             <div id="historyContent">
                 <ul id="historyList"></ul>
+                <button id="clearHistoryButton" onclick="clearHistory()" style="display: none;">Очистить историю</button>
             </div>
         </div>
     </div>
