@@ -169,6 +169,11 @@ function formatDateTime(timestamp) {
     return `${day}.${month}.${year} ${hours}:${minutes}`;
 }
 
+// Функция для преобразования названия материала (убираем "Из " и приводим к нижнему регистру)
+function formatMaterialName(pouchType) {
+    return pouchType.replace("Из ", "").toLowerCase();
+}
+
 // Функция для обновления списка брендирования и размеров
 function updateBrandingAndSizeOptions() {
     const pouchType = document.getElementById("pouchType").value;
@@ -236,9 +241,13 @@ async function loadHistory() {
             li.style.cursor = "pointer";
             li.style.setProperty('--index', index);
             li.addEventListener("click", () => {
-                const calculationText = `Материал: ${entry.pouchType}, брендирование: ${entry.brandingType}, размер: ${entry.size} см, количество: ${entry.quantity} шт\n` +
+                const formattedMaterial = formatMaterialName(entry.pouchType);
+                const calculationText = `Материал: ${formattedMaterial}\n` +
+                                       `Брендирование: ${entry.brandingType.toLowerCase()}\n` +
+                                       `Размер: ${entry.size} см\n` +
+                                       `Количество: ${entry.quantity} шт\n` +
                                        `Цена за 1 шт: ${entry.pricePerUnit} рублей`;
-                const totalPriceText = `Итоговая цена: ${entry.pricePerUnit} * ${entry.quantity} = ${entry.totalPrice} рублей`;
+                const totalPriceText = `\nИтоговая цена: ${entry.pricePerUnit} * ${entry.quantity} = ${entry.totalPrice} рублей.`;
                 document.getElementById("calculationText").innerText = calculationText;
                 document.getElementById("totalPriceText").innerText = totalPriceText;
                 document.getElementById("copyButton").style.display = "inline-block";
@@ -364,9 +373,13 @@ function calculatePouchPrice() {
     document.getElementById("result").innerText = `Итоговая цена: ${totalPrice} рублей`;
 
     // Формируем текст с логикой расчета
-    const calculationText = `Материал: ${pouchType}, брендирование: ${brandingType}, размер: ${size} см, количество: ${quantity} шт\n` +
+    const formattedMaterial = formatMaterialName(pouchType);
+    const calculationText = `Материал: ${formattedMaterial}\n` +
+                           `Брендирование: ${brandingType.toLowerCase()}\n` +
+                           `Размер: ${size} см\n` +
+                           `Количество: ${quantity} шт\n` +
                            `Цена за 1 шт: ${pricePerUnit} рублей`;
-    const totalPriceText = `Итоговая цена: ${pricePerUnit} * ${quantity} = ${totalPrice} рублей`;
+    const totalPriceText = `\nИтоговая цена: ${pricePerUnit} * ${quantity} = ${totalPrice} рублей.`;
 
     document.getElementById("calculationText").innerText = calculationText;
     document.getElementById("totalPriceText").innerText = totalPriceText;
@@ -388,7 +401,7 @@ function calculatePouchPrice() {
 function copyCalculation() {
     const calculationText = document.getElementById("calculationText").innerText;
     const totalPriceText = document.getElementById("totalPriceText").innerText;
-    const fullText = `${calculationText}\n${totalPriceText}`; // Объединяем оба текста
+    const fullText = `${calculationText}${totalPriceText}`; // Объединяем оба текста
     const copyButton = document.getElementById("copyButton");
     navigator.clipboard.writeText(fullText).then(() => {
         copyButton.classList.add("copied");
