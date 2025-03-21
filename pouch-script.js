@@ -1,6 +1,6 @@
 // Данные о ценах
 const pouchPrices = {
-    "Пыльники из хлопка": {
+    "Из хлопка": {
         "Без брендирования, лента хлопок": {
             "8x10": { "50-199": 85, "200-499": 80, "500+": 70 },
             "10x15": { "50-199": 95, "200-499": 90, "500+": 80 },
@@ -22,7 +22,7 @@ const pouchPrices = {
             "20x30": { "50-199": 115, "200-499": 110, "500+": 105 }
         }
     },
-    "Пыльники из хлопка с двойной лентой": {
+    "Из хлопка с двойной лентой": {
         "Термоперенос": {
             "8x10": { "100-199": 155, "200-499": 145, "500+": 135 },
             "15x15": { "100-199": 180, "200-499": 170, "500+": 145 },
@@ -36,7 +36,7 @@ const pouchPrices = {
             "40x40": { "100-199": 255, "200-499": 245, "500+": 205 }
         }
     },
-    "Пыльники из саржи с двойной лентой": {
+    "Из саржи с двойной лентой": {
         "Термоперенос": {
             "8x10": { "100-199": 175, "200-499": 165, "500+": 140 },
             "15x15": { "100-199": 210, "200-499": 195, "500+": 170 },
@@ -44,14 +44,14 @@ const pouchPrices = {
             "40x40": { "100-199": 345, "200-499": 335, "500+": 305 }
         }
     },
-    "Пыльники из фатина": {
+    "Из фатина": {
         "Лента с логотипом": {
             "8x15": { "50-199": 105, "200-499": 80, "500+": 75 },
             "14x20": { "50-199": 115, "200-499": 90, "500+": 85 },
             "18x30": { "50-199": 130, "200-499": 105, "500+": 100 }
         }
     },
-    "Пыльники из велюра": {
+    "Из велюра": {
         "Лента с логотипом": {
             "7x9": { "50-199": 90, "200-499": 85, "500+": 80 },
             "9x12": { "50-199": 100, "200-499": 95, "500+": 90 },
@@ -63,7 +63,7 @@ const pouchPrices = {
             "12x18": { "100-199": 135, "200-499": 125, "500+": 110 }
         }
     },
-    "Пыльники из велюра с двойной лентой": {
+    "Из велюра с двойной лентой": {
         "Термоперенос": {
             "8x10": { "100-199": 145, "200-499": 140, "500+": 120 },
             "15x15": { "100-199": 185, "200-499": 175, "500+": 160 },
@@ -77,53 +77,53 @@ const pouchPrices = {
 const availablePouchTypes = Object.keys(pouchPrices);
 
 const availableBrandingTypes = {
-    "Пыльники из хлопка": [
+    "Из хлопка": [
         "Без брендирования, лента хлопок",
         "Брендирование штампом",
         "Термоперенос",
         "С помощью ленты с печатью"
     ],
-    "Пыльники из хлопка с двойной лентой": [
+    "Из хлопка с двойной лентой": [
         "Термоперенос",
         "Штамп"
     ],
-    "Пыльники из саржи с двойной лентой": [
+    "Из саржи с двойной лентой": [
         "Термоперенос"
     ],
-    "Пыльники из фатина": [
+    "Из фатина": [
         "Лента с логотипом"
     ],
-    "Пыльники из велюра": [
+    "Из велюра": [
         "Лента с логотипом",
         "Термоперенос"
     ],
-    "Пыльники из велюра с двойной лентой": [
+    "Из велюра с двойной лентой": [
         "Термоперенос"
     ]
 };
 
 const availableSizes = {
-    "Пыльники из хлопка": {
+    "Из хлопка": {
         "Без брендирования, лента хлопок": ["8x10", "10x15", "20x30"],
         "Брендирование штампом": ["8x10", "10x15", "20x30"],
         "Термоперенос": ["8x10", "10x15", "20x30"],
         "С помощью ленты с печатью": ["8x10", "10x15", "20x30"]
     },
-    "Пыльники из хлопка с двойной лентой": {
+    "Из хлопка с двойной лентой": {
         "Термоперенос": ["8x10", "15x15", "25x25", "40x40"],
         "Штамп": ["8x10", "15x15", "25x25", "40x40"]
     },
-    "Пыльники из саржи с двойной лентой": {
+    "Из саржи с двойной лентой": {
         "Термоперенос": ["8x10", "15x15", "25x25", "40x40"]
     },
-    "Пыльники из фатина": {
+    "Из фатина": {
         "Лента с логотипом": ["8x15", "14x20", "18x30"]
     },
-    "Пыльники из велюра": {
+    "Из велюра": {
         "Лента с логотипом": ["7x9", "9x12", "12x18"],
         "Термоперенос": ["7x9", "9x12", "12x18"]
     },
-    "Пыльники из велюра с двойной лентой": {
+    "Из велюра с двойной лентой": {
         "Термоперенос": ["8x10", "15x15", "25x25", "40x40"]
     }
 };
@@ -236,10 +236,11 @@ async function loadHistory() {
             li.style.cursor = "pointer";
             li.style.setProperty('--index', index);
             li.addEventListener("click", () => {
-                const calculationText = `Название ленты: ${entry.pouchType}, брендирование: ${entry.brandingType}, размер: ${entry.size} см, количество: ${entry.quantity} шт\n` +
-                                       `Цена за 1 шт: ${entry.pricePerUnit} рублей\n` +
-                                       `Итоговая цена = ${entry.pricePerUnit} * ${entry.quantity} = ${entry.totalPrice} рублей`;
+                const calculationText = `Материал: ${entry.pouchType}, брендирование: ${entry.brandingType}, размер: ${entry.size} см, количество: ${entry.quantity} шт\n` +
+                                       `Цена за 1 шт: ${entry.pricePerUnit} рублей`;
+                const totalPriceText = `Итоговая цена: ${entry.pricePerUnit} * ${entry.quantity} = ${entry.totalPrice} рублей`;
                 document.getElementById("calculationText").innerText = calculationText;
+                document.getElementById("totalPriceText").innerText = totalPriceText;
                 document.getElementById("copyButton").style.display = "inline-block";
                 document.getElementById("result").innerText = `Итоговая цена: ${entry.totalPrice} рублей`;
                 document.getElementById("result").classList.remove("fade-in");
@@ -328,6 +329,7 @@ function calculatePouchPrice() {
     if (isNaN(quantity) || quantity <= 0) {
         document.getElementById("result").innerText = "Ошибка: введите корректное количество (положительное число).";
         document.getElementById("calculationText").innerText = "";
+        document.getElementById("totalPriceText").innerText = "";
         document.getElementById("copyButton").style.display = "none";
         return;
     }
@@ -337,6 +339,7 @@ function calculatePouchPrice() {
     if (quantity < minQty) {
         document.getElementById("result").innerText = `Ошибка: минимальное количество — ${minQty} шт.`;
         document.getElementById("calculationText").innerText = "";
+        document.getElementById("totalPriceText").innerText = "";
         document.getElementById("copyButton").style.display = "none";
         return;
     }
@@ -360,12 +363,13 @@ function calculatePouchPrice() {
     // Отображаем результат
     document.getElementById("result").innerText = `Итоговая цена: ${totalPrice} рублей`;
 
-    // Формируем текст с логикой расчета (добавляем строку с итоговой ценой)
-    const calculationText = `Название ленты: ${pouchType}, брендирование: ${brandingType}, размер: ${size} см, количество: ${quantity} шт\n` +
-                           `Цена за 1 шт: ${pricePerUnit} рублей\n` +
-                           `Итоговая цена = ${pricePerUnit} * ${quantity} = ${totalPrice} рублей`;
+    // Формируем текст с логикой расчета
+    const calculationText = `Материал: ${pouchType}, брендирование: ${brandingType}, размер: ${size} см, количество: ${quantity} шт\n` +
+                           `Цена за 1 шт: ${pricePerUnit} рублей`;
+    const totalPriceText = `Итоговая цена: ${pricePerUnit} * ${quantity} = ${totalPrice} рублей`;
 
     document.getElementById("calculationText").innerText = calculationText;
+    document.getElementById("totalPriceText").innerText = totalPriceText;
     document.getElementById("copyButton").style.display = "inline-block";
 
     // Запускаем анимацию
@@ -383,8 +387,10 @@ function calculatePouchPrice() {
 // Функция для копирования текста
 function copyCalculation() {
     const calculationText = document.getElementById("calculationText").innerText;
+    const totalPriceText = document.getElementById("totalPriceText").innerText;
+    const fullText = `${calculationText}\n${totalPriceText}`; // Объединяем оба текста
     const copyButton = document.getElementById("copyButton");
-    navigator.clipboard.writeText(calculationText).then(() => {
+    navigator.clipboard.writeText(fullText).then(() => {
         copyButton.classList.add("copied");
         setTimeout(() => {
             copyButton.classList.remove("copied");
@@ -430,6 +436,14 @@ window.onload = function() {
 
     // Изначально скрываем историю
     document.getElementById("historyContent").classList.add("collapsed");
+
+    // Добавляем обработчик события для клавиши Enter
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault(); // Предотвращаем стандартное поведение (например, отправку формы)
+            calculatePouchPrice(); // Вызываем функцию расчета
+        }
+    });
 
     console.log("Инициализация завершена");
 };
