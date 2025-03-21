@@ -1,7 +1,8 @@
 body {
-    margin: 0;
     font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -9,101 +10,297 @@ body {
 }
 
 .container {
-    text-align: center;
+    background-color: white;
     padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 300px;
 }
 
 h1 {
-    font-size: 2.5em;
-    color: #333;
-    margin-bottom: 40px;
+    font-size: 24px;
+    margin-bottom: 20px;
+    animation: slideInFromTop 0.5s ease-out;
 }
 
 .calculator-selection {
     display: flex;
-    justify-content: space-between; /* Располагаем кнопки слева и справа */
-    align-items: center;
-    max-width: 800px; /* Ограничиваем ширину контейнера */
-    margin: 0 auto;
-    gap: 20px; /* Расстояние между кнопками */
+    flex-direction: column;
+    gap: 20px;
 }
 
 .calculator-button {
-    position: relative;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #007bff;
+    background-color: #4CAF50;
     color: white;
+    padding: 20px;
+    border-radius: 5px;
     text-decoration: none;
-    padding: 15px 30px;
-    border-radius: 10px;
-    font-size: 1.2em;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    width: 300px; /* Фиксированная ширина кнопок */
-    height: 100px; /* Фиксированная высота кнопок */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    font-size: 18px;
+    transition: background-color 0.3s;
 }
 
 .calculator-button i {
     margin-right: 10px;
-    font-size: 1.5em;
 }
 
 .calculator-button:hover {
+    background-color: #45a049;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    animation: fadeInFromLeft 0.5s ease-out;
+    animation-delay: calc(0.1s * var(--order));
+}
+
+label i {
+    margin-right: 5px;
+    color: #007BFF;
+}
+
+select, input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 8px center;
+    background-size: 16px;
+    animation: fadeInFromRight 0.5s ease-out;
+    animation-delay: calc(0.1s * var(--order));
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+button:hover {
+    animation: pulse 0.5s infinite;
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+h3 {
+    margin-top: 20px;
+    color: #333;
+    font-weight: bold;
+}
+
+#toggleHistoryButton {
+    background-color: #007BFF;
+    padding: 5px 10px;
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+#toggleHistoryButton:hover {
     background-color: #0056b3;
-    transform: scale(1.05); /* Лёгкое увеличение при наведении */
 }
 
-/* Стили для анимации ленточки (слева) */
-.tape-button .tape-animation {
-    position: absolute;
-    top: -50px; /* Ленточка будет появляться сверху */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 80px;
-    background: url('tape-icon.png') no-repeat center center; /* Замените на своё изображение ленточки */
-    background-size: contain;
-    opacity: 0; /* Изначально скрыто */
-    transition: opacity 0.5s ease, top 0.5s ease; /* Плавная анимация */
+.calculation-details {
+    margin-top: 10px;
+    text-align: left;
 }
 
-/* Появление ленточки при наведении */
-.tape-button:hover .tape-animation {
+.calculation-details p {
+    font-size: 14px;
+    color: #555;
+    margin: 0 0 10px 0;
+    white-space: pre-wrap; /* Сохраняем переносы строк */
+}
+
+/* Выделяем строку "Итоговая цена" */
+.calculation-details p::last-line {
+    font-weight: bold;
+    color: #333;
+}
+
+#copyButton {
+    background-color: #007BFF;
+    padding: 5px 10px;
+    font-size: 14px;
+    transition: transform 0.2s ease;
+}
+
+#copyButton:hover {
+    background-color: #0056b3;
+}
+
+#copyButton.copied {
+    background-color: #28a745;
+    animation: flash 0.5s ease;
+    transform: scale(1.1);
+}
+
+#history {
+    margin-top: 20px;
+    text-align: left;
+}
+
+#history h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#historyContent {
+    transition: max-height 0.5s ease, opacity 0.5s ease;
+    overflow: hidden;
+}
+
+#historyContent.collapsed {
+    max-height: 0;
+    opacity: 0;
+}
+
+#historyContent.expanded {
+    max-height: 300px; /* Устанавливаем максимальную высоту для плавного раскрытия */
     opacity: 1;
-    top: -70px; /* Ленточка "вылезает" чуть выше */
 }
 
-/* Стили для анимации мешочка (справа) */
-.pouch-button .pouch-animation {
-    position: absolute;
-    top: -50px; /* Мешочек будет появляться сверху */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 80px;
-    background: url('pouch-icon.png') no-repeat center center; /* Замените на своё изображение мешочка */
-    background-size: contain;
-    opacity: 0; /* Изначально скрыто */
-    transition: opacity 0.5s ease, top 0.5s ease; /* Плавная анимация */
+#history ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 10px 0;
+    max-height: 200px;
+    overflow-y: auto;
 }
 
-/* Появление мешочка при наведении */
-.pouch-button:hover .pouch-animation {
-    opacity: 1;
-    top: -70px; /* Мешочек "вылезает" чуть выше */
+#history li {
+    font-size: 14px;
+    color: #555;
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    animation: slideInFromLeft 0.5s ease-out;
+    animation-delay: calc(0.05s * var(--index));
 }
 
-/* Адаптивность для мобильных устройств */
-@media (max-width: 768px) {
-    .calculator-selection {
-        flex-direction: column; /* На мобильных устройствах кнопки располагаются друг под другом */
-        gap: 30px;
+#history li:hover {
+    background-color: #f0f0f0;
+}
+
+#clearHistoryButton {
+    background-color: #dc3545;
+    padding: 5px 10px;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+#clearHistoryButton:hover {
+    background-color: #c82333;
+}
+
+/* Анимация для заголовка */
+@keyframes slideInFromTop {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
     }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
-    .calculator-button {
-        width: 100%; /* Кнопки занимают всю ширину */
-        max-width: 300px;
+/* Анимация для элементов формы (слева) */
+@keyframes fadeInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Анимация для элементов формы (справа) */
+@keyframes fadeInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Анимация для кнопки "Рассчитать" */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+    }
+    70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+    }
+}
+
+/* Анимация для кнопки "Копировать" */
+@keyframes flash {
+    0% {
+        background-color: #007BFF;
+    }
+    50% {
+        background-color: #28a745;
+        transform: scale(1.2);
+    }
+    100% {
+        background-color: #28a745;
+        transform: scale(1.1);
+    }
+}
+
+/* Анимация для записей истории */
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Анимация для результата и деталей */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
