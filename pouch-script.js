@@ -237,8 +237,7 @@ async function loadHistory() {
             li.style.setProperty('--index', index);
             li.addEventListener("click", () => {
                 const calculationText = `Название ленты: ${entry.pouchType}, брендирование: ${entry.brandingType}, размер: ${entry.size} см, количество: ${entry.quantity} шт\n` +
-                                       `Цена за 1 шт = ${entry.pricePerUnit} рублей\n` +
-                                       `Итоговая цена = ${entry.pricePerUnit} * ${entry.quantity} = ${entry.totalPrice} рублей`;
+                                       `Цена за 1 шт: ${entry.pricePerUnit} рублей`;
                 document.getElementById("calculationText").innerText = calculationText;
                 document.getElementById("copyButton").style.display = "inline-block";
                 document.getElementById("result").innerText = `Итоговая цена: ${entry.totalPrice} рублей`;
@@ -360,10 +359,9 @@ function calculatePouchPrice() {
     // Отображаем результат
     document.getElementById("result").innerText = `Итоговая цена: ${totalPrice} рублей`;
 
-    // Формируем текст с логикой расчета
+    // Формируем текст с логикой расчета (убираем "Итоговая цена", так как она есть в result)
     const calculationText = `Название ленты: ${pouchType}, брендирование: ${brandingType}, размер: ${size} см, количество: ${quantity} шт\n` +
-                           `Цена за 1 шт = ${pricePerUnit} рублей\n` +
-                           `Итоговая цена = ${pricePerUnit} * ${quantity} = ${totalPrice} рублей`;
+                           `Цена за 1 шт: ${pricePerUnit} рублей`;
 
     document.getElementById("calculationText").innerText = calculationText;
     document.getElementById("copyButton").style.display = "inline-block";
