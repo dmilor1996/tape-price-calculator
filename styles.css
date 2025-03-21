@@ -100,15 +100,14 @@ button:active {
 h3 {
     margin-top: 20px;
     color: #333;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    font-weight: bold;
 }
 
 #toggleHistoryButton {
     background-color: #007BFF;
     padding: 5px 10px;
     font-size: 14px;
+    margin-left: 10px;
 }
 
 #toggleHistoryButton:hover {
@@ -124,6 +123,7 @@ h3 {
     font-size: 14px;
     color: #555;
     margin: 0 0 10px 0;
+    white-space: pre-wrap; /* Сохраняем переносы строк */
 }
 
 #copyButton {
@@ -143,14 +143,17 @@ h3 {
     transform: scale(1.1);
 }
 
-.history {
+#history {
     margin-top: 20px;
     text-align: left;
 }
 
-.history h3 {
+#history h3 {
     font-size: 18px;
     margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 #historyContent {
@@ -168,7 +171,7 @@ h3 {
     opacity: 1;
 }
 
-.history ul {
+#history ul {
     list-style: none;
     padding: 0;
     margin: 0 0 10px 0;
@@ -176,7 +179,7 @@ h3 {
     overflow-y: auto;
 }
 
-.history li {
+#history li {
     font-size: 14px;
     color: #555;
     padding: 5px 0;
@@ -186,7 +189,7 @@ h3 {
     animation-delay: calc(0.05s * var(--index));
 }
 
-.history li:hover {
+#history li:hover {
     background-color: #f0f0f0;
 }
 
@@ -194,6 +197,7 @@ h3 {
     background-color: #dc3545;
     padding: 5px 10px;
     font-size: 14px;
+    margin-top: 10px;
 }
 
 #clearHistoryButton:hover {
