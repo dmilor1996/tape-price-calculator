@@ -15,17 +15,17 @@ body {
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     text-align: center;
-    width: 300px; /* Возвращаем исходную ширину для калькуляторов */
+    width: 300px; /* Ширина для калькуляторов */
 }
 
-/* Новый класс для начального экрана */
+/* Класс для начального экрана */
 .menu-container {
     background-color: white;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     text-align: center;
-    width: 450px; /* Уменьшенная ширина для начального экрана */
+    width: 450px; /* Ширина для начального экрана на десктопе */
 }
 
 h1 {
@@ -37,7 +37,7 @@ h1 {
 .calculator-selection {
     display: flex;
     justify-content: center; /* Центрируем кнопки */
-    gap: 10px; /* Уменьшаем расстояние между кнопками */
+    gap: 10px; /* Расстояние между кнопками */
     flex-wrap: wrap; /* Перенос на мобильных устройствах */
 }
 
@@ -341,7 +341,7 @@ h3 {
     transform: translateX(0) rotate(0deg); /* Начальная позиция */
 }
 
-/* Появление иконки при наведении */
+/* Появление иконки при наведении (десктоп) */
 .tape-button:hover .tape-animation {
     transform: translateX(-70px) rotate(360deg); /* Иконка ленты "вылезает" влево */
     opacity: 1; /* Становится видимой */
@@ -355,29 +355,47 @@ h3 {
 /* Адаптивность для мобильных устройств */
 @media (max-width: 768px) {
     .menu-container {
-        width: 300px; /* Возвращаем исходную ширину контейнера */
+        width: 300px; /* Уменьшаем ширину контейнера, как у калькуляторов */
     }
 
     .calculator-selection {
-        flex-direction: column; /* Кнопки друг под другом на мобильных */
-        gap: 20px;
+        flex-direction: column; /* Кнопки друг под другом */
+        gap: 20px; /* Увеличиваем расстояние между кнопками для читаемости */
     }
 
     .calculator-button {
-        width: 100%; /* Кнопки занимают всю ширину */
+        width: 100%; /* Кнопки занимают всю ширину контейнера */
+        box-sizing: border-box; /* Учитываем padding в ширине */
     }
 
+    /* Изменяем анимацию иконок для мобильных */
     .tape-animation,
     .pouch-animation {
         width: 50px;
         height: 50px;
+        top: auto; /* Убираем позиционирование по вертикали */
+        left: 50%; /* Центрируем иконку */
+    }
+
+    /* Иконка ленты (верхняя кнопка) */
+    .tape-animation {
+        bottom: 100%; /* Изначально выше кнопки */
+        transform: translateX(-50%) rotate(0deg); /* Начальная позиция */
     }
 
     .tape-button:hover .tape-animation {
-        transform: translateX(-50px) rotate(360deg); /* Корректируем смещение для мобильных */
+        transform: translateX(-50%) translateY(-60px) rotate(360deg); /* Иконка "вылезает" вверх */
+        opacity: 1; /* Становится видимой */
+    }
+
+    /* Иконка мешочка (нижняя кнопка) */
+    .pouch-animation {
+        bottom: -10px; /* Изначально ниже кнопки */
+        transform: translateX(-50%) rotate(0deg); /* Начальная позиция */
     }
 
     .pouch-button:hover .pouch-animation {
-        transform: translateX(50px) rotate(360deg); /* Корректируем смещение для мобильных */
+        transform: translateX(-50%) translateY(60px) rotate(360deg); /* Иконка "вылезает" вниз */
+        opacity: 1; /* Становится видимой */
     }
 }
