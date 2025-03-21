@@ -15,7 +15,17 @@ body {
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     text-align: center;
-    width: 600px; /* Увеличиваем ширину контейнера, чтобы кнопки поместились слева и справа */
+    width: 300px; /* Возвращаем исходную ширину для калькуляторов */
+}
+
+/* Новый класс для начального экрана */
+.menu-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 450px; /* Уменьшенная ширина для начального экрана */
 }
 
 h1 {
@@ -26,8 +36,8 @@ h1 {
 
 .calculator-selection {
     display: flex;
-    justify-content: space-between; /* Кнопки слева и справа */
-    gap: 20px; /* Расстояние между кнопками */
+    justify-content: center; /* Центрируем кнопки */
+    gap: 10px; /* Уменьшаем расстояние между кнопками */
     flex-wrap: wrap; /* Перенос на мобильных устройствах */
 }
 
@@ -312,7 +322,7 @@ h3 {
 .tape-animation,
 .pouch-animation {
     position: absolute;
-    top: 50%; /* Иконка изначально в центре кнопки по вертикали */
+    top: 50%; /* Иконка в центре кнопки по вертикали */
     opacity: 0; /* Изначально скрыто */
     width: 60px;
     height: 60px;
@@ -321,30 +331,30 @@ h3 {
 
 /* Иконка ленты (слева) */
 .tape-animation {
-    right: 0; /* Изначально у правого края кнопки */
+    left: 0; /* Изначально у левого края кнопки */
     transform: translateX(0) rotate(0deg); /* Начальная позиция */
 }
 
 /* Иконка мешочка (справа) */
 .pouch-animation {
-    left: 0; /* Изначально у левого края кнопки */
+    right: 0; /* Изначально у правого края кнопки */
     transform: translateX(0) rotate(0deg); /* Начальная позиция */
 }
 
 /* Появление иконки при наведении */
 .tape-button:hover .tape-animation {
-    transform: translateX(70px) rotate(360deg); /* Иконка ленты "вылезает" вправо */
+    transform: translateX(-70px) rotate(360deg); /* Иконка ленты "вылезает" влево */
     opacity: 1; /* Становится видимой */
 }
 
 .pouch-button:hover .pouch-animation {
-    transform: translateX(-70px) rotate(360deg); /* Иконка мешочка "вылезает" влево */
+    transform: translateX(70px) rotate(360deg); /* Иконка мешочка "вылезает" вправо */
     opacity: 1; /* Становится видимой */
 }
 
 /* Адаптивность для мобильных устройств */
 @media (max-width: 768px) {
-    .container {
+    .menu-container {
         width: 300px; /* Возвращаем исходную ширину контейнера */
     }
 
@@ -364,10 +374,10 @@ h3 {
     }
 
     .tape-button:hover .tape-animation {
-        transform: translateX(50px) rotate(360deg); /* Корректируем смещение для мобильных */
+        transform: translateX(-50px) rotate(360deg); /* Корректируем смещение для мобильных */
     }
 
     .pouch-button:hover .pouch-animation {
-        transform: translateX(-50px) rotate(360deg); /* Корректируем смещение для мобильных */
+        transform: translateX(50px) rotate(360deg); /* Корректируем смещение для мобильных */
     }
 }
