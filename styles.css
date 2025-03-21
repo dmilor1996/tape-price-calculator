@@ -126,6 +126,12 @@ h3 {
     white-space: pre-wrap; /* Сохраняем переносы строк */
 }
 
+/* Выделяем строку "Итоговая цена" */
+.calculation-details p::last-line {
+    font-weight: bold;
+    color: #333;
+}
+
 #copyButton {
     background-color: #007BFF;
     padding: 5px 10px;
