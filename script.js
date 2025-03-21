@@ -24,12 +24,12 @@ const availableWidths = {
 
 // Инициализация Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyAdcTDguKECAJJTrsEOr-kuXIBEpcxhpuc",
-  authDomain: "tape-price-calculator.firebaseapp.com",
-  projectId: "tape-price-calculator",
-  storageBucket: "tape-price-calculator.firebasestorage.app",
-  messagingSenderId: "841180656652",
-  appId: "1:841180656652:web:ad4f256602e9d7de4eaa29"
+    apiKey: "AIzaSyAdcTDguKECAJJTrsEOr-kuXIBEpcxhpuc",
+    authDomain: "tape-price-calculator.firebaseapp.com",
+    projectId: "tape-price-calculator",
+    storageBucket: "tape-price-calculator.firebasestorage.app",
+    messagingSenderId: "841180656652",
+    appId: "1:841180656652:web:ad4f256602e9d7de4eaa29"
 };
 
 // Инициализируем Firebase
@@ -270,4 +270,12 @@ window.onload = function() {
     loadHistory();
     // Изначально скрываем историю
     document.getElementById("historyContent").classList.add("collapsed");
+
+    // Добавляем обработчик события для клавиши Enter
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault(); // Предотвращаем стандартное поведение (например, отправку формы)
+            calculatePrice(); // Вызываем функцию расчета
+        }
+    });
 };
