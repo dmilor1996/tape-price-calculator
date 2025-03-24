@@ -353,16 +353,26 @@ function calculatePouchPrice() {
         return;
     }
 
-    // Определяем категорию количества
+    // Определяем категорию количества в зависимости от минимального количества
     let quantityCategory;
-    if (quantity >= 500) {
-        quantityCategory = "500+";
-    } else if (quantity >= 200) {
-        quantityCategory = "200-499";
-    } else if (quantity >= 100) {
-        quantityCategory = "100-199";
+    if (minQty === 50) {
+        // Для типов с минимальным количеством 50 (например, "Лента с логотипом", "Без брендирования, лента хлопок")
+        if (quantity >= 500) {
+            quantityCategory = "500+";
+        } else if (quantity >= 200) {
+            quantityCategory = "200-499";
+        } else {
+            quantityCategory = "50-199"; // Используем категорию, которая есть в данных
+        }
     } else {
-        quantityCategory = "50-199";
+        // Для типов с минимальным количеством 100 (например, "Термоперенос", "Штамп")
+        if (quantity >= 500) {
+            quantityCategory = "500+";
+        } else if (quantity >= 200) {
+            quantityCategory = "200-499";
+        } else {
+            quantityCategory = "100-199";
+        }
     }
 
     // Получаем цену за 1 штуку
