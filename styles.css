@@ -399,3 +399,137 @@ h3 {
         opacity: 1; /* Становится видимой */
     }
 }
+
+/* Стили для модального окна редактора цен */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    animation: fadeIn 0.5s ease-in; /* Используем существующую анимацию */
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 8px; /* Соответствует стилю контейнера */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Соответствует стилю контейнера */
+    width: 80%;
+    max-width: 800px;
+    text-align: left;
+    animation: slideInFromTop 0.5s ease-out; /* Используем существующую анимацию */
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close:hover,
+.close:focus {
+    color: #333;
+}
+
+#priceEditorContent {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    padding-right: 10px;
+}
+
+#priceEditorContent h3 {
+    font-size: 18px;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+#priceEditorContent h4 {
+    font-size: 16px;
+    color: #555;
+    margin: 10px 0;
+    font-weight: bold;
+}
+
+#priceEditorContent h5 {
+    font-size: 14px;
+    color: #777;
+    margin: 5px 0;
+}
+
+#priceEditorContent div {
+    margin-bottom: 5px;
+}
+
+#priceEditorContent label {
+    display: inline-block;
+    width: 150px;
+    margin-right: 10px;
+    font-weight: normal;
+    color: #555;
+    animation: none; /* Убираем анимацию для меток в редакторе */
+}
+
+#priceEditorContent input {
+    width: 60px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: none; /* Убираем стрелку для input в редакторе */
+    animation: none; /* Убираем анимацию для полей ввода в редакторе */
+}
+
+#priceEditorContent input:focus {
+    border-color: #007BFF;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+/* Стили для кнопки "Редактировать цены" */
+button[onclick="openPriceEditor()"] {
+    background-color: #ff9800; /* Оранжевый цвет для отличия от других кнопок */
+}
+
+button[onclick="openPriceEditor()"]:hover {
+    background-color: #e68900;
+    animation: pulse 0.5s infinite; /* Используем существующую анимацию */
+}
+
+/* Стили для кнопки "Сохранить" в редакторе */
+button[onclick="savePrices()"] {
+    background-color: #007BFF; /* Синий цвет, как у других акцентных кнопок */
+    margin: 0 auto;
+    display: block;
+}
+
+button[onclick="savePrices()"]:hover {
+    background-color: #0056b3;
+    animation: pulse 0.5s infinite; /* Используем существующую анимацию */
+}
+
+/* Адаптивность для модального окна на мобильных устройствах */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 90%;
+        margin: 10% auto;
+    }
+
+    #priceEditorContent label {
+        width: 120px;
+    }
+
+    #priceEditorContent input {
+        width: 50px;
+    }
+}
