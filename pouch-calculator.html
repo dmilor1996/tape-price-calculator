@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Калькулятор цен на мешочки</title>
-    <link rel="stylesheet" href="tape-price-calculator/styles.css">
+    <link rel="stylesheet" href="/tape-price-calculator/styles.css">
     <!-- Подключение Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Подключение Firebase -->
@@ -20,7 +20,7 @@
 <body>
     <div class="container">
         <!-- Кнопка "Назад" -->
-        <a href="index.html" class="back-button">
+        <a href="/tape-price-calculator/index.html" class="back-button">
             <i class="fas fa-arrow-left"></i> Назад
         </a>
 
@@ -37,8 +37,8 @@
         <label style="--order: 4;"><i class="fas fa-boxes"></i> Количество (шт):</label>
         <input type="number" id="quantity" style="--order: 4;" min="1" required><br><br>
 
-        <button type="button" onclick="calculatePouchPrice()">Рассчитать</button>
-        <button type="button" onclick="openPriceEditor()" style="background-color: #ff9800; margin-left: 10px;">
+        <button type="button" class="calculate" onclick="calculatePouchPrice()">Рассчитать</button>
+        <button type="button" class="edit-prices" onclick="openPriceEditor()">
             Редактировать цены
         </button>
 
@@ -55,9 +55,9 @@
         <div id="history">
             <h3>
                 История расчетов
-                <button id="toggleHistoryButton" onclick="toggleHistory()">Показать историю</button>
+                <button id="toggleHistoryButton" class="show-history" onclick="toggleHistory()">Показать историю</button>
             </h3>
-            <div id="historyContent">
+            <div id="historyContent" class="collapsed">
                 <ul id="historyList"></ul>
                 <button id="clearHistoryButton" onclick="clearHistory()" style="display: none;">Очистить историю</button>
             </div>
@@ -65,16 +65,17 @@
 
         <!-- Модальное окно для редактирования цен -->
         <div id="priceEditorModal" class="modal">
-            <div class="modal-content">
+            <div id="priceEditorContent" class="modal-content">
                 <span class="close" onclick="closePriceEditor()">×</span>
                 <h2>Редактировать цены</h2>
-                <div id="priceEditorContent"></div>
-                <button onclick="savePrices()">Сохранить</button>
+                <div id="priceEditorInputs"></div>
+                <button id="savePricesButton" onclick="savePrices()">Сохранить</button>
+                <button id="closeEditorButton" onclick="closePriceEditor()">Закрыть</button>
             </div>
         </div>
     </div>
     <!-- Подключение скрипта в конце body -->
-    <script src="pouch-script.js"></script>
+    <script src="/tape-price-calculator/pouch-script.js"></script>
     <!-- Регистрация Service Worker -->
     <script>
         if ('serviceWorker' in navigator) {
