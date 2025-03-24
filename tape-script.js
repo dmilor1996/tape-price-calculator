@@ -4,68 +4,18 @@ let prices = {};
 // Значения по умолчанию для цен
 const defaultTapePrices = {
     "Президент": {
-        15: {
-            "50 м": 45,
-            "100 м": 40,
-            "150 м": 40,
-            "от 200 м": 35
-        },
-        25: {
-            "50 м": 55,
-            "100 м": 50,
-            "150 м": 50,
-            "от 200 м": 45
-        }
+        15: { "50 м": 45, "100 м": 40, "150 м": 40, "от 200 м": 35 },
+        25: { "50 м": 55, "100 м": 50, "150 м": 50, "от 200 м": 45 }
     },
     "Классическая": {
-        10: {
-            "50 м": 30,
-            "100 м": 25,
-            "150 м": 25,
-            "от 200 м": 20
-        },
-        15: {
-            "50 м": 30,
-            "100 м": 25,
-            "150 м": 25,
-            "от 200 м": 20
-        },
-        20: {
-            "50 м": 35,
-            "100 м": 30,
-            "150 м": 30,
-            "от 200 м": 25
-        },
-        25: {
-            "50 м": 40,
-            "100 м": 40,
-            "150 м": 35,
-            "от 200 м": 35
-        },
-        30: {
-            "50 м": 40,
-            "100 м": 40,
-            "150 м": 35,
-            "от 200 м": 35
-        },
-        40: {
-            "50 м": 45,
-            "100 м": 45,
-            "150 м": 40,
-            "от 200 м": 40
-        },
-        50: {
-            "50 м": 45,
-            "100 м": 45,
-            "150 м": 40,
-            "от 200 м": 40
-        },
-        60: {
-            "50 м": 50,
-            "100 м": 50,
-            "150 м": 45,
-            "от 200 м": 45
-        }
+        10: { "50 м": 30, "100 м": 25, "150 м": 25, "от 200 м": 20 },
+        15: { "50 м": 30, "100 м": 25, "150 м": 25, "от 200 м": 20 },
+        20: { "50 м": 35, "100 м": 30, "150 м": 30, "от 200 м": 25 },
+        25: { "50 м": 40, "100 м": 40, "150 м": 35, "от 200 м": 35 },
+        30: { "50 м": 40, "100 м": 40, "150 м": 35, "от 200 м": 35 },
+        40: { "50 м": 45, "100 м": 45, "150 м": 40, "от 200 м": 40 },
+        50: { "50 м": 45, "100 м": 45, "150 м": 40, "от 200 м": 40 },
+        60: { "50 м": 50, "100 м": 50, "150 м": 45, "от 200 м": 45 }
     }
 };
 
@@ -85,12 +35,22 @@ const firebaseConfig = {
     appId: "1:841180656652:web:ad4f256602e9d7de4eaa29"
 };
 
-// Инициализируем Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+let db;
+try {
+    if (typeof firebase === "undefined") {
+        throw new Error("Firebase не загружен. Проверьте подключение скриптов Firebase.");
+    }
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+    console.log("Firebase успешно инициализирован");
+} catch (error) {
+    console.error(error.message);
+    document.getElementById("result").innerText = "Ошибка: не удалось подключиться к Firebase. Проверьте подключение к интернету.";
+}
 
 // Функция для инициализации цен в Firebase
 async function initializeTapePrices() {
+    if (!db) return;
     try {
         const snapshot = await db.collection("tapePrices").get();
         if (snapshot.empty) {
@@ -110,11 +70,17 @@ async function initializeTapePrices() {
         }
     } catch (error) {
         console.error("Ошибка при инициализации цен в Firebase:", error);
+        document.getElementById("result").innerText = "Ошибка: не удалось инициализировать цены. Проверьте подключение к интернету.";
     }
 }
 
 // Функция для загрузки цен из Firebase
 async function loadTapePrices() {
+    if (!db) {
+        prices = defaultTapePrices;
+        document.getElementById("result").innerText = "Firebase недоступен: используются цены по умолчанию.";
+        return;
+    }
     try {
         const snapshot = await db.collection("tapePrices").get();
         prices = {};
@@ -125,54 +91,43 @@ async function loadTapePrices() {
         console.log("Цены успешно загружены из Firebase:", prices);
     } catch (error) {
         console.error("Ошибка при загрузке цен из Firebase:", error);
-        // Проверяем, если это ошибка оффлайн-режима
-        if (error.message && error.message.includes('Оффлайн')) {
+        if (navigator.onLine) {
+            document.getElementById("result").innerText = "Ошибка: не удалось загрузить цены. Проверьте подключение к интернету.";
+        } else {
             document.getElementById("result").innerText = "Оффлайн: используются последние сохраненные цены.";
-            // Пробуем загрузить данные из кэша через fetch (Service Worker уже обработал запрос)
             try {
-                const response = await fetch('https://firestore.googleapis.com/v1/projects/tape-price-calculator/databases/(default)/documents/tapePrices');
-                if (response.ok) {
-                    const data = await response.json();
-                    prices = {};
-                    data.documents.forEach(doc => {
-                        const tapeType = doc.fields.tapeType.stringValue;
-                        const tapePrices = doc.fields.prices.mapValue ? JSON.parse(doc.fields.prices.stringValue) : doc.fields.prices;
-                        prices[tapeType] = tapePrices;
-                    });
-                    console.log("Цены загружены из кэша:", prices);
+                const cachedPrices = localStorage.getItem("tapePrices");
+                if (cachedPrices) {
+                    prices = JSON.parse(cachedPrices);
+                    console.log("Цены загружены из локального хранилища:", prices);
                 } else {
-                    // Если данных нет, используем значения по умолчанию
                     prices = defaultTapePrices;
                     document.getElementById("result").innerText = "Оффлайн: используются цены по умолчанию.";
                 }
-            } catch (fetchError) {
-                console.error("Ошибка при загрузке цен из кэша:", fetchError);
+            } catch (cacheError) {
+                console.error("Ошибка при загрузке цен из локального хранилища:", cacheError);
                 prices = defaultTapePrices;
                 document.getElementById("result").innerText = "Оффлайн: используются цены по умолчанию.";
             }
-        } else {
-            document.getElementById("result").innerText = "Ошибка: не удалось загрузить цены. Проверьте подключение к интернету.";
         }
     }
+    localStorage.setItem("tapePrices", JSON.stringify(prices));
 }
 
 // Функция для открытия редактора цен
 function openPriceEditor() {
     const modal = document.getElementById("priceEditorModal");
-    const content = document.getElementById("priceEditorContent");
-    content.innerHTML = ""; // Очищаем содержимое
+    const content = document.getElementById("priceEditorInputs");
+    content.innerHTML = "";
 
-    // Перебираем все типы лент и их цены
     for (const tapeType in prices) {
         const tapeSection = document.createElement("div");
         tapeSection.innerHTML = `<h3>${tapeType}</h3>`;
 
-        // Перебираем ширины
         for (const width in prices[tapeType]) {
             const widthSection = document.createElement("div");
             widthSection.innerHTML = `<h4>Ширина: ${width} мм</h4>`;
 
-            // Перебираем категории длины
             for (const lengthCategory in prices[tapeType][width]) {
                 const price = prices[tapeType][width][lengthCategory];
                 const inputId = `price-${tapeType}-${width}-${lengthCategory}`.replace(/[^a-zA-Z0-9]/g, '-');
@@ -200,9 +155,12 @@ function closePriceEditor() {
 
 // Функция для сохранения цен в Firebase
 async function savePrices() {
+    if (!db) {
+        alert("Firebase недоступен. Проверьте подключение к интернету.");
+        return;
+    }
     try {
         const newPrices = {};
-        // Собираем новые цены из полей ввода
         for (const tapeType in prices) {
             newPrices[tapeType] = {};
             for (const width in prices[tapeType]) {
@@ -220,7 +178,6 @@ async function savePrices() {
             }
         }
 
-        // Сохраняем новые цены в Firebase
         for (const tapeType in newPrices) {
             await db.collection("tapePrices").doc(tapeType).set({
                 tapeType: tapeType,
@@ -228,11 +185,9 @@ async function savePrices() {
             });
         }
 
-        // Обновляем локальную переменную prices
         prices = newPrices;
+        localStorage.setItem("tapePrices", JSON.stringify(prices));
         console.log("Цены успешно обновлены:", prices);
-
-        // Закрываем модальное окно
         closePriceEditor();
         alert("Цены успешно сохранены!");
     } catch (error) {
@@ -258,17 +213,12 @@ function updateWidthOptions() {
     const tapeType = document.getElementById("tapeType").value;
     const widthSelect = document.getElementById("width");
 
-    // Очищаем текущие опции
     widthSelect.innerHTML = "";
-
-    // Добавляем новые опции в зависимости от типа ленты
     const widths = availableWidths[tapeType] || [];
     if (widths.length === 0) {
         console.error("Ошибка: размеры для типа ленты не найдены:", tapeType);
         return;
     }
-
-    console.log("Обновление размеров для типа ленты:", tapeType, "Доступные размеры:", widths);
 
     widths.forEach(width => {
         const option = document.createElement("option");
@@ -282,43 +232,42 @@ function updateWidthOptions() {
 async function loadHistory() {
     const historyList = document.getElementById("historyList");
     const clearHistoryButton = document.getElementById("clearHistoryButton");
-
-    // Очищаем текущий список
     historyList.innerHTML = "";
+
+    if (!db) {
+        const errorMessage = document.createElement("p");
+        errorMessage.style.color = "red";
+        errorMessage.textContent = "Firebase недоступен: история недоступна.";
+        historyList.appendChild(errorMessage);
+        return;
+    }
 
     try {
         const snapshot = await db.collection("calculations").orderBy("timestamp", "desc").get();
         const history = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-        // Если история пуста, скрываем кнопку "Очистить историю"
         if (history.length === 0) {
             clearHistoryButton.style.display = "none";
             return;
         }
 
-        // Показываем кнопку "Очистить историю"
         clearHistoryButton.style.display = "inline-block";
-
-        // Добавляем записи в список
         history.forEach((entry, index) => {
             const li = document.createElement("li");
             const dateTime = formatDateTime(entry.timestamp);
             li.textContent = `${dateTime}: ${entry.tapeType}, ${entry.width} мм, ${entry.length} м, ${entry.totalPrice} рублей`;
-            li.style.cursor = "pointer"; // Делаем элемент кликабельным
-            li.style.setProperty('--index', index); // Устанавливаем индекс для анимации
+            li.style.setProperty('--index', index);
             li.addEventListener("click", () => {
-                // При клике показываем детали расчета
                 const calculationText = `Тип ленты: ${entry.tapeType}, ширина: ${entry.width} мм, длина: ${entry.length} м\n` +
                                        `Цена за 1 м = ${entry.totalPrice / entry.length} рублей (категория: ${entry.lengthCategory})\n` +
                                        `Итоговая цена = ${entry.totalPrice / entry.length} * ${entry.length} = ${entry.totalPrice} рублей`;
                 document.getElementById("calculationText").innerText = calculationText;
                 document.getElementById("copyButton").style.display = "inline-block";
                 document.getElementById("result").innerText = `Итоговая цена: ${entry.totalPrice} рублей`;
-                // Запускаем анимацию
                 document.getElementById("result").classList.remove("fade-in");
                 document.getElementById("calculationDetails").classList.remove("fade-in");
-                void document.getElementById("result").offsetWidth; // Перезапускаем анимацию
-                void document.getElementById("calculationDetails").offsetWidth; // Перезапускаем анимацию
+                void document.getElementById("result").offsetWidth;
+                void document.getElementById("calculationDetails").offsetWidth;
                 document.getElementById("result").classList.add("fade-in");
                 document.getElementById("calculationDetails").classList.add("fade-in");
             });
@@ -326,28 +275,18 @@ async function loadHistory() {
         });
     } catch (error) {
         console.error("Ошибка при загрузке истории:", error);
-        // Проверяем, если это ошибка оффлайн-режима
-        if (error.message && error.message.includes('Оффлайн')) {
-            const historySection = document.getElementById("history");
-            const errorMessage = document.createElement("p");
-            errorMessage.style.color = "orange";
-            errorMessage.textContent = "Оффлайн: история расчетов недоступна.";
-            historySection.appendChild(errorMessage);
-            clearHistoryButton.style.display = "none";
-        } else {
-            const historySection = document.getElementById("history");
-            const errorMessage = document.createElement("p");
-            errorMessage.style.color = "red";
-            errorMessage.textContent = "Не удалось загрузить историю. Проверьте подключение к интернету.";
-            historySection.appendChild(errorMessage);
-        }
+        const errorMessage = document.createElement("p");
+        errorMessage.style.color = navigator.onLine ? "red" : "orange";
+        errorMessage.textContent = navigator.onLine ? "Не удалось загрузить историю. Проверьте подключение к интернету." : "Оффлайн: история недоступна.";
+        historyList.appendChild(errorMessage);
+        clearHistoryButton.style.display = "none";
     }
 }
 
-// Функция для сохранения расчета в Firestore с ограничением на 15 записей
+// Функция для сохранения расчета в Firestore
 async function saveToHistory(tapeType, width, length, totalPrice, lengthCategory) {
+    if (!db) return;
     try {
-        // Добавляем новую запись
         await db.collection("calculations").add({
             tapeType,
             width,
@@ -357,11 +296,9 @@ async function saveToHistory(tapeType, width, length, totalPrice, lengthCategory
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        // Проверяем количество записей
         const snapshot = await db.collection("calculations").orderBy("timestamp", "asc").get();
         const totalRecords = snapshot.docs.length;
 
-        // Если записей больше 15, удаляем самые старые
         if (totalRecords > 15) {
             const recordsToDelete = totalRecords - 15;
             const batch = db.batch();
@@ -380,6 +317,7 @@ async function saveToHistory(tapeType, width, length, totalPrice, lengthCategory
 
 // Функция для очистки истории
 async function clearHistory() {
+    if (!db) return;
     try {
         const snapshot = await db.collection("calculations").get();
         const batch = db.batch();
@@ -396,12 +334,10 @@ async function clearHistory() {
 
 // Функция для расчета цены
 function calculatePrice() {
-    // Получаем значения из формы
     const tapeType = document.getElementById("tapeType").value;
     const width = parseInt(document.getElementById("width").value);
     const length = parseInt(document.getElementById("length").value);
 
-    // Проверка минимального заказа
     if (length < 50) {
         document.getElementById("result").innerText = "Ошибка: минимальный заказ — 50 метров.";
         document.getElementById("calculationText").innerText = "";
@@ -409,7 +345,6 @@ function calculatePrice() {
         return;
     }
 
-    // Проверка кратности 50
     if (length % 50 !== 0) {
         document.getElementById("result").innerText = "Ошибка: длина должна быть кратна 50 (например, 50, 100, 150, 200 и т.д.).";
         document.getElementById("calculationText").innerText = "";
@@ -417,75 +352,53 @@ function calculatePrice() {
         return;
     }
 
-    // Определяем категорию длины рулона
     let lengthCategory;
-    if (length === 50) {
-        lengthCategory = "50 м";
-    } else if (length === 100) {
-        lengthCategory = "100 м";
-    } else if (length === 150) {
-        lengthCategory = "150 м";
-    } else if (length >= 200) {
-        lengthCategory = "от 200 м";
-    } else {
+    if (length === 50) lengthCategory = "50 м";
+    else if (length === 100) lengthCategory = "100 м";
+    else if (length === 150) lengthCategory = "150 м";
+    else if (length >= 200) lengthCategory = "от 200 м";
+    else {
         document.getElementById("result").innerText = "Ошибка: длина должна быть 50, 100, 150 или 200 м и более.";
         document.getElementById("calculationText").innerText = "";
         document.getElementById("copyButton").style.display = "none";
         return;
     }
 
-    // Проверяем, что цены загружены
-    if (!prices[tapeType] || !prices[tapeType][width] || !prices[tapeType][width][lengthCategory]) {
+    if (!prices[tapeType]?.[width]?.[lengthCategory]) {
         document.getElementById("result").innerText = "Ошибка: цены для выбранных параметров не найдены.";
         return;
     }
 
-    // Получаем цену за 1 метр
     const pricePerMeter = prices[tapeType][width][lengthCategory];
-
-    // Рассчитываем итоговую цену
     const totalPrice = pricePerMeter * length;
 
-    // Отображаем результат
     document.getElementById("result").innerText = `Итоговая цена: ${totalPrice} рублей`;
 
-    // Формируем текст с логикой расчета
     const calculationText = `Тип ленты: ${tapeType}, ширина: ${width} мм, длина: ${length} м\n` +
                            `Цена за 1 м = ${pricePerMeter} рублей (категория: ${lengthCategory})\n` +
                            `Итоговая цена = ${pricePerMeter} * ${length} = ${totalPrice} рублей`;
 
-    // Отображаем логику расчета
     document.getElementById("calculationText").innerText = calculationText;
-
-    // Показываем кнопку "Копировать"
     document.getElementById("copyButton").style.display = "inline-block";
 
-    // Запускаем анимацию
     document.getElementById("result").classList.remove("fade-in");
     document.getElementById("calculationDetails").classList.remove("fade-in");
-    void document.getElementById("result").offsetWidth; // Перезапускаем анимацию
-    void document.getElementById("calculationDetails").offsetWidth; // Перезапускаем анимацию
+    void document.getElementById("result").offsetWidth;
+    void document.getElementById("calculationDetails").offsetWidth;
     document.getElementById("result").classList.add("fade-in");
     document.getElementById("calculationDetails").classList.add("fade-in");
 
-    // Сохраняем расчет в Firestore
     saveToHistory(tapeType, width, length, totalPrice, lengthCategory);
 }
 
-// Функция для копирования текста с визуальной обратной связью
+// Функция для копирования текста
 function copyCalculation() {
     const calculationText = document.getElementById("calculationText").innerText;
     const copyButton = document.getElementById("copyButton");
 
-    // Копируем текст
     navigator.clipboard.writeText(calculationText).then(() => {
-        // Добавляем класс для изменения цвета кнопки
         copyButton.classList.add("copied");
-
-        // Через 1 секунду убираем класс, чтобы цвет вернулся к исходному
-        setTimeout(() => {
-            copyButton.classList.remove("copied");
-        }, 1000);
+        setTimeout(() => copyButton.classList.remove("copied"), 1000);
     }).catch(err => {
         console.error("Ошибка при копировании:", err);
     });
@@ -506,23 +419,19 @@ function toggleHistory() {
     }
 }
 
-// Инициализация списка размеров и истории при загрузке страницы
+// Инициализация при загрузке страницы
 window.onload = async function() {
-    // Инициализируем цены, если их нет
     await initializeTapePrices();
-    // Загружаем цены из Firebase
     await loadTapePrices();
 
     updateWidthOptions();
     loadHistory();
-    // Изначально скрываем историю
     document.getElementById("historyContent").classList.add("collapsed");
 
-    // Добавляем обработчик события для клавиши Enter
     document.addEventListener("keydown", function(event) {
         if (event.key === "Enter") {
-            event.preventDefault(); // Предотвращаем стандартное поведение (например, отправку формы)
-            calculatePrice(); // Вызываем функцию расчета
+            event.preventDefault();
+            calculatePrice();
         }
     });
 };
