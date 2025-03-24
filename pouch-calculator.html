@@ -69,5 +69,18 @@
     </div>
     <!-- Подключение скрипта в конце body -->
     <script src="pouch-script.js"></script>
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => {
+                    console.log('Service Worker зарегистрирован:', registration);
+                })
+                .catch(error => {
+                    console.error('Ошибка регистрации Service Worker:', error);
+                });
+        });
+    }
+</script>
 </body>
 </html>
