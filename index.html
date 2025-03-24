@@ -7,11 +7,11 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Добавляем манифест PWA -->
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="/tape-price-calculator/manifest.json">
     <!-- Добавляем мета-теги для iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="/pwa-icon-192.png">
+    <link rel="apple-touch-icon" href="/tape-price-calculator/pwa-icon-192.png">
 </head>
 <body>
     <div class="menu-container">
@@ -32,7 +32,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
+                navigator.serviceWorker.register('/tape-price-calculator/sw.js')
                     .then(registration => {
                         console.log('Service Worker зарегистрирован:', registration);
                     })
