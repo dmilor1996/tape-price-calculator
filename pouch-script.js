@@ -144,7 +144,7 @@ async function initializePouchPricesInFirebase() {
 }
 
 // Вызовите эту функцию один раз, чтобы загрузить данные
-// initializePouchPricesInFirebase();
+initializePouchPricesInFirebase();
 
 // Минимальное количество для каждого типа брендирования
 const minQuantity = {
