@@ -125,7 +125,34 @@ async function loadTapePrices() {
         console.log("Цены успешно загружены из Firebase:", prices);
     } catch (error) {
         console.error("Ошибка при загрузке цен из Firebase:", error);
-        document.getElementById("result").innerText = "Ошибка: не удалось загрузить цены. Проверьте подключение к интернету.";
+        // Проверяем, если это ошибка оффлайн-режима
+        if (error.message && error.message.includes('Оффлайн')) {
+            document.getElementById("result").innerText = "Оффлайн: используются последние сохраненные цены.";
+            // Пробуем загрузить данные из кэша через fetch (Service Worker уже обработал запрос)
+            try {
+                const response = await fetch('https://firestore.googleapis.com/v1/projects/tape-price-calculator/databases/(default)/documents/tapePrices');
+                if (response.ok) {
+                    const data = await response.json();
+                    prices = {};
+                    data.documents.forEach(doc => {
+                        const tapeType = doc.fields.tapeType.stringValue;
+                        const tapePrices = doc.fields.prices.mapValue ? JSON.parse(doc.fields.prices.stringValue) : doc.fields.prices;
+                        prices[tapeType] = tapePrices;
+                    });
+                    console.log("Цены загружены из кэша:", prices);
+                } else {
+                    // Если данных нет, используем значения по умолчанию
+                    prices = defaultTapePrices;
+                    document.getElementById("result").innerText = "Оффлайн: используются цены по умолчанию.";
+                }
+            } catch (fetchError) {
+                console.error("Ошибка при загрузке цен из кэша:", fetchError);
+                prices = defaultTapePrices;
+                document.getElementById("result").innerText = "Оффлайн: используются цены по умолчанию.";
+            }
+        } else {
+            document.getElementById("result").innerText = "Ошибка: не удалось загрузить цены. Проверьте подключение к интернету.";
+        }
     }
 }
 
@@ -217,7 +244,7 @@ async function savePrices() {
 // Функция для форматирования даты и времени
 function formatDateTime(timestamp) {
     if (!timestamp) return "Неизвестно";
-    const date = timestamp.toDate();
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
@@ -299,6 +326,21 @@ async function loadHistory() {
         });
     } catch (error) {
         console.error("Ошибка при загрузке истории:", error);
+        // Проверяем, если это ошибка оффлайн-режима
+        if (error.message && error.message.includes('Оффлайн')) {
+            const historySection = document.getElementById("history");
+            const errorMessage = document.createElement("p");
+            errorMessage.style.color = "orange";
+            errorMessage.textContent = "Оффлайн: история расчетов недоступна.";
+            historySection.appendChild(errorMessage);
+            clearHistoryButton.style.display = "none";
+        } else {
+            const historySection = document.getElementById("history");
+            const errorMessage = document.createElement("p");
+            errorMessage.style.color = "red";
+            errorMessage.textContent = "Не удалось загрузить историю. Проверьте подключение к интернету.";
+            historySection.appendChild(errorMessage);
+        }
     }
 }
 
@@ -332,6 +374,7 @@ async function saveToHistory(tapeType, width, length, totalPrice, lengthCategory
         loadHistory();
     } catch (error) {
         console.error("Ошибка при сохранении в Firestore:", error);
+        document.getElementById("result").innerText = "Ошибка: не удалось сохранить расчет. Проверьте подключение к интернету.";
     }
 }
 
@@ -347,6 +390,7 @@ async function clearHistory() {
         loadHistory();
     } catch (error) {
         console.error("Ошибка при очистке истории:", error);
+        document.getElementById("result").innerText = "Ошибка: не удалось очистить историю. Проверьте подключение к интернету.";
     }
 }
 
