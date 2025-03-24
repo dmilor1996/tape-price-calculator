@@ -128,6 +128,24 @@ const availableSizes = {
     }
 };
 
+// Временная функция для загрузки начальных данных в Firebase
+async function initializePouchPricesInFirebase() {
+    try {
+        for (const material in pouchPrices) {
+            await db.collection("pouchPrices").doc(material).set({
+                material: material,
+                prices: pouchPrices[material]
+            });
+        }
+        console.log("Цены успешно загружены в Firebase!");
+    } catch (error) {
+        console.error("Ошибка при загрузке цен в Firebase:", error);
+    }
+}
+
+// Вызовите эту функцию один раз, чтобы загрузить данные
+// initializePouchPricesInFirebase();
+
 // Минимальное количество для каждого типа брендирования
 const minQuantity = {
     "Без брендирования, лента хлопок": 50,
@@ -194,24 +212,6 @@ function updateBrandingAndSizeOptions() {
     // Обновляем размеры
     updateSizeOptions();
 }
-
-// Временная функция для загрузки начальных данных в Firebase
-async function initializePouchPricesInFirebase() {
-    try {
-        for (const material in pouchPrices) {
-            await db.collection("pouchPrices").doc(material).set({
-                material: material,
-                prices: pouchPrices[material]
-            });
-        }
-        console.log("Цены успешно загружены в Firebase!");
-    } catch (error) {
-        console.error("Ошибка при загрузке цен в Firebase:", error);
-    }
-}
-
-// Вызовите эту функцию один раз, чтобы загрузить данные
-// initializePouchPricesInFirebase();
 
 // Функция для обновления списка размеров
 function updateSizeOptions() {
