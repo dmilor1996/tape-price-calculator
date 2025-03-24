@@ -6,6 +6,12 @@
     <title>Выбор калькулятора</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Добавляем manifest.json -->
+    <link rel="manifest" href="/manifest.json">
+    <!-- Для iOS: добавляем поддержку иконки -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="/tape-icon.png">
 </head>
 <body>
     <div class="menu-container">
@@ -21,5 +27,19 @@
             </a>
         </div>
     </div>
+    <!-- Подключаем service worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('Service Worker зарегистрирован:', registration);
+                    })
+                    .catch(error => {
+                        console.error('Ошибка регистрации Service Worker:', error);
+                    });
+            });
+        }
+    </script>
 </body>
 </html>
