@@ -30,6 +30,9 @@
             <input type="number" id="length" name="length" min="1" required style="--order: 3;"><br><br>
 
             <button type="button" onclick="calculatePrice()">Рассчитать</button>
+            <button type="button" onclick="openPriceEditor()" style="background-color: #ff9800; margin-left: 10px;">
+                Редактировать цены
+            </button>
         </form>
 
         <h3 id="result">Итоговая цена: 0 рублей</h3>
@@ -49,6 +52,16 @@
             <div id="historyContent" class="collapsed">
                 <ul id="historyList"></ul>
                 <button id="clearHistoryButton" onclick="clearHistory()" style="display: none;">Очистить историю</button>
+            </div>
+        </div>
+
+        <!-- Модальное окно для редактирования цен -->
+        <div id="priceEditorModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closePriceEditor()">×</span>
+                <h2>Редактировать цены</h2>
+                <div id="priceEditorContent"></div>
+                <button onclick="savePrices()">Сохранить</button>
             </div>
         </div>
     </div>
