@@ -5,221 +5,73 @@ let pouchPrices = {};
 const defaultPouchPrices = {
     "Хлопок": {
         "Без брендирования, лента хлопок": {
-            "8x10": {
-                "50-199": 100,
-                "200-499": 90,
-                "500+": 80
-            },
-            "10x15": {
-                "50-199": 120,
-                "200-499": 110,
-                "500+": 100
-            },
-            "20x30": {
-                "50-199": 150,
-                "200-499": 140,
-                "500+": 130
-            }
+            "8x10": { "50-199": 100, "200-499": 90, "500+": 80 },
+            "10x15": { "50-199": 120, "200-499": 110, "500+": 100 },
+            "20x30": { "50-199": 150, "200-499": 140, "500+": 130 }
         },
         "Брендирование штампом": {
-            "8x10": {
-                "100-199": 130,
-                "200-499": 120,
-                "500+": 110
-            },
-            "10x15": {
-                "100-199": 150,
-                "200-499": 140,
-                "500+": 130
-            },
-            "20x30": {
-                "100-199": 180,
-                "200-499": 170,
-                "500+": 160
-            }
+            "8x10": { "100-199": 130, "200-499": 120, "500+": 110 },
+            "10x15": { "100-199": 150, "200-499": 140, "500+": 130 },
+            "20x30": { "100-199": 180, "200-499": 170, "500+": 160 }
         },
         "Термоперенос": {
-            "8x10": {
-                "100-199": 140,
-                "200-499": 130,
-                "500+": 120
-            },
-            "10x15": {
-                "100-199": 160,
-                "200-499": 150,
-                "500+": 140
-            },
-            "20x30": {
-                "100-199": 190,
-                "200-499": 180,
-                "500+": 170
-            }
+            "8x10": { "100-199": 140, "200-499": 130, "500+": 120 },
+            "10x15": { "100-199": 160, "200-499": 150, "500+": 140 },
+            "20x30": { "100-199": 190, "200-499": 180, "500+": 170 }
         },
         "С помощью ленты с печатью": {
-            "8x10": {
-                "50-199": 110,
-                "200-499": 100,
-                "500+": 90
-            },
-            "10x15": {
-                "50-199": 130,
-                "200-499": 120,
-                "500+": 110
-            },
-            "20x30": {
-                "50-199": 160,
-                "200-499": 150,
-                "500+": 140
-            }
+            "8x10": { "50-199": 110, "200-499": 100, "500+": 90 },
+            "10x15": { "50-199": 130, "200-499": 120, "500+": 110 },
+            "20x30": { "50-199": 160, "200-499": 150, "500+": 140 }
         }
     },
     "Хлопок с двойной лентой": {
         "Термоперенос": {
-            "8x10": {
-                "100-199": 150,
-                "200-499": 140,
-                "500+": 130
-            },
-            "15x15": {
-                "100-199": 170,
-                "200-499": 160,
-                "500+": 150
-            },
-            "25x25": {
-                "100-199": 200,
-                "200-499": 190,
-                "500+": 180
-            },
-            "40x40": {
-                "100-199": 250,
-                "200-499": 240,
-                "500+": 230
-            }
+            "8x10": { "100-199": 150, "200-499": 140, "500+": 130 },
+            "15x15": { "100-199": 170, "200-499": 160, "500+": 150 },
+            "25x25": { "100-199": 200, "200-499": 190, "500+": 180 },
+            "40x40": { "100-199": 250, "200-499": 240, "500+": 230 }
         },
         "Штамп": {
-            "8x10": {
-                "100-199": 140,
-                "200-499": 130,
-                "500+": 120
-            },
-            "15x15": {
-                "100-199": 160,
-                "200-499": 150,
-                "500+": 140
-            },
-            "25x25": {
-                "100-199": 190,
-                "200-499": 180,
-                "500+": 170
-            },
-            "40x40": {
-                "100-199": 240,
-                "200-499": 230,
-                "500+": 220
-            }
+            "8x10": { "100-199": 140, "200-499": 130, "500+": 120 },
+            "15x15": { "100-199": 160, "200-499": 150, "500+": 140 },
+            "25x25": { "100-199": 190, "200-499": 180, "500+": 170 },
+            "40x40": { "100-199": 240, "200-499": 230, "500+": 220 }
         }
     },
     "Саржа с двойной лентой": {
         "Термоперенос": {
-            "8x10": {
-                "100-199": 160,
-                "200-499": 150,
-                "500+": 140
-            },
-            "15x15": {
-                "100-199": 180,
-                "200-499": 170,
-                "500+": 160
-            },
-            "25x25": {
-                "100-199": 210,
-                "200-499": 200,
-                "500+": 190
-            },
-            "40x40": {
-                "100-199": 260,
-                "200-499": 250,
-                "500+": 240
-            }
+            "8x10": { "100-199": 160, "200-499": 150, "500+": 140 },
+            "15x15": { "100-199": 180, "200-499": 170, "500+": 160 },
+            "25x25": { "100-199": 210, "200-499": 200, "500+": 190 },
+            "40x40": { "100-199": 260, "200-499": 250, "500+": 240 }
         }
     },
     "Фатин": {
         "Лента с логотипом": {
-            "8x15": {
-                "50-199": 90,
-                "200-499": 80,
-                "500+": 70
-            },
-            "14x20": {
-                "50-199": 110,
-                "200-499": 100,
-                "500+": 90
-            },
-            "18x30": {
-                "50-199": 130,
-                "200-499": 120,
-                "500+": 110
-            }
+            "8x15": { "50-199": 90, "200-499": 80, "500+": 70 },
+            "14x20": { "50-199": 110, "200-499": 100, "500+": 90 },
+            "18x30": { "50-199": 130, "200-499": 120, "500+": 110 }
         }
     },
     "Велюр": {
         "Лента с логотипом": {
-            "7x9": {
-                "50-199": 120,
-                "200-499": 110,
-                "500+": 100
-            },
-            "9x12": {
-                "50-199": 140,
-                "200-499": 130,
-                "500+": 120
-            },
-            "12x18": {
-                "50-199": 160,
-                "200-499": 150,
-                "500+": 140
-            }
+            "7x9": { "50-199": 120, "200-499": 110, "500+": 100 },
+            "9x12": { "50-199": 140, "200-499": 130, "500+": 120 },
+            "12x18": { "50-199": 160, "200-499": 150, "500+": 140 }
         },
         "Термоперенос": {
-            "7x9": {
-                "100-199": 150,
-                "200-499": 140,
-                "500+": 130
-            },
-            "9x12": {
-                "100-199": 170,
-                "200-499": 160,
-                "500+": 150
-            },
-            "12x18": {
-                "100-199": 190,
-                "200-499": 180,
-                "500+": 170
-            }
+            "7x9": { "100-199": 150, "200-499": 140, "500+": 130 },
+            "9x12": { "100-199": 170, "200-499": 160, "500+": 150 },
+            "12x18": { "100-199": 190, "200-499": 180, "500+": 170 }
         }
     },
     "Велюр с двойной лентой": {
         "Термоперенос": {
-            "8x10": {
-                "100-199": 170,
-                "200-499": 160,
-                "500+": 150
-            },
-            "15x15": {
-                "100-199": 190,
-                "200-499": 180,
-                "500+": 170
-            },
-            "25x25": {
-                "100-199": 220,
-                "200-499": 210,
-                "500+": 200
-            },
-            "40x40": {
-                "100-199": 270,
-                "200-499": 260,
-                "500+": 250
-            }
+            "8x10": { "100-199": 170, "200-499": 160, "500+": 150 },
+            "15x15": { "100-199": 190, "200-499": 180, "500+": 170 },
+            "25x25": { "100-199": 220, "200-499": 210, "500+": 200 },
+            "40x40": { "100-199": 270, "200-499": 260, "500+": 250 }
         }
     }
 };
@@ -307,16 +159,22 @@ const firebaseConfig = {
 };
 
 // Инициализация Firebase
-if (typeof firebase === "undefined") {
-    console.error("Firebase не загружен. Проверьте подключение скриптов Firebase.");
-} else {
+let db;
+try {
+    if (typeof firebase === "undefined") {
+        throw new Error("Firebase не загружен. Проверьте подключение скриптов Firebase.");
+    }
     firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+    console.log("Firebase успешно инициализирован");
+} catch (error) {
+    console.error(error.message);
+    document.getElementById("result").innerText = "Ошибка: не удалось подключиться к Firebase. Проверьте подключение к интернету.";
 }
-
-const db = firebase.firestore();
 
 // Функция для инициализации цен в Firebase
 async function initializePouchPrices() {
+    if (!db) return;
     try {
         const snapshot = await db.collection("pouchPrices").get();
         if (snapshot.empty) {
@@ -336,11 +194,17 @@ async function initializePouchPrices() {
         }
     } catch (error) {
         console.error("Ошибка при инициализации цен в Firebase:", error);
+        document.getElementById("result").innerText = "Ошибка: не удалось инициализировать цены. Проверьте подключение к интернету.";
     }
 }
 
 // Функция для загрузки цен из Firebase
 async function loadPouchPrices() {
+    if (!db) {
+        pouchPrices = defaultPouchPrices;
+        document.getElementById("result").innerText = "Firebase недоступен: используются цены по умолчанию.";
+        return;
+    }
     try {
         const snapshot = await db.collection("pouchPrices").get();
         pouchPrices = {};
@@ -351,53 +215,48 @@ async function loadPouchPrices() {
         console.log("Цены успешно загружены из Firebase:", pouchPrices);
     } catch (error) {
         console.error("Ошибка при загрузке цен из Firebase:", error);
-        // Проверяем, если это ошибка оффлайн-режима
-        if (error.message.includes('Оффлайн')) {
+        if (navigator.onLine) {
+            document.getElementById("result").innerText = "Ошибка: не удалось загрузить цены. Проверьте подключение к интернету.";
+        } else {
             document.getElementById("result").innerText = "Оффлайн: используются последние сохраненные цены.";
-            // Пробуем загрузить данные из кэша через fetch (Service Worker уже обработал запрос)
-            const response = await fetch('https://firestore.googleapis.com/v1/projects/tape-price-calculator/databases/(default)/documents/pouchPrices');
-            if (response.ok) {
-                const data = await response.json();
-                pouchPrices = {};
-                data.documents.forEach(doc => {
-                    const material = doc.fields.material.stringValue;
-                    const prices = JSON.parse(doc.fields.prices.stringValue);
-                    pouchPrices[material] = prices;
-                });
-                console.log("Цены загружены из кэша:", pouchPrices);
-            } else {
-                // Если данных нет, используем значения по умолчанию
+            try {
+                const cachedPrices = localStorage.getItem("pouchPrices");
+                if (cachedPrices) {
+                    pouchPrices = JSON.parse(cachedPrices);
+                    console.log("Цены загружены из локального хранилища:", pouchPrices);
+                } else {
+                    pouchPrices = defaultPouchPrices;
+                    document.getElementById("result").innerText = "Оффлайн: используются цены по умолчанию.";
+                }
+            } catch (cacheError) {
+                console.error("Ошибка при загрузке цен из локального хранилища:", cacheError);
                 pouchPrices = defaultPouchPrices;
                 document.getElementById("result").innerText = "Оффлайн: используются цены по умолчанию.";
             }
-        } else {
-            document.getElementById("result").innerText = "Ошибка: не удалось загрузить цены. Проверьте подключение к интернету.";
         }
     }
+    // Сохраняем цены в локальное хранилище для оффлайн-режима
+    localStorage.setItem("pouchPrices", JSON.stringify(pouchPrices));
 }
 
 // Функция для открытия редактора цен
 function openPriceEditor() {
     const modal = document.getElementById("priceEditorModal");
-    const content = document.getElementById("priceEditorContent");
+    const content = document.getElementById("priceEditorInputs");
     content.innerHTML = ""; // Очищаем содержимое
 
-    // Перебираем все материалы и их цены
     for (const material in pouchPrices) {
         const materialSection = document.createElement("div");
         materialSection.innerHTML = `<h3>${material}</h3>`;
 
-        // Перебираем типы брендирования
         for (const brandingType in pouchPrices[material]) {
             const brandingSection = document.createElement("div");
             brandingSection.innerHTML = `<h4>${brandingType}</h4>`;
 
-            // Перебираем размеры
             for (const size in pouchPrices[material][brandingType]) {
                 const sizeSection = document.createElement("div");
                 sizeSection.innerHTML = `<h5>Размер: ${size}</h5>`;
 
-                // Перебираем категории количества
                 for (const quantityCategory in pouchPrices[material][brandingType][size]) {
                     const price = pouchPrices[material][brandingType][size][quantityCategory];
                     const inputId = `price-${material}-${brandingType}-${size}-${quantityCategory}`.replace(/[^a-zA-Z0-9]/g, '-');
@@ -427,9 +286,12 @@ function closePriceEditor() {
 
 // Функция для сохранения цен в Firebase
 async function savePrices() {
+    if (!db) {
+        alert("Firebase недоступен. Проверьте подключение к интернету.");
+        return;
+    }
     try {
         const newPrices = {};
-        // Собираем новые цены из полей ввода
         for (const material in pouchPrices) {
             newPrices[material] = {};
             for (const brandingType in pouchPrices[material]) {
@@ -450,7 +312,6 @@ async function savePrices() {
             }
         }
 
-        // Сохраняем новые цены в Firebase
         for (const material in newPrices) {
             await db.collection("pouchPrices").doc(material).set({
                 material: material,
@@ -458,11 +319,9 @@ async function savePrices() {
             });
         }
 
-        // Обновляем локальную переменную pouchPrices
         pouchPrices = newPrices;
+        localStorage.setItem("pouchPrices", JSON.stringify(pouchPrices));
         console.log("Цены успешно обновлены:", pouchPrices);
-
-        // Закрываем модальное окно
         closePriceEditor();
         alert("Цены успешно сохранены!");
     } catch (error) {
@@ -474,7 +333,7 @@ async function savePrices() {
 // Функция для форматирования даты и времени
 function formatDateTime(timestamp) {
     if (!timestamp) return "Неизвестно";
-    const date = timestamp.toDate();
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
@@ -483,7 +342,7 @@ function formatDateTime(timestamp) {
     return `${day}.${month}.${year} ${hours}:${minutes}`;
 }
 
-// Функция для преобразования названия материала (приводим к нижнему регистру)
+// Функция для преобразования названия материала
 function formatMaterialName(pouchType) {
     return pouchType.toLowerCase();
 }
@@ -493,10 +352,7 @@ function updateBrandingAndSizeOptions() {
     const pouchType = document.getElementById("pouchType").value;
     const brandingTypeSelect = document.getElementById("brandingType");
 
-    // Очищаем текущие опции брендирования
     brandingTypeSelect.innerHTML = "";
-
-    // Добавляем новые опции брендирования
     const brandingTypes = availableBrandingTypes[pouchType] || [];
     brandingTypes.forEach(type => {
         const option = document.createElement("option");
@@ -505,7 +361,6 @@ function updateBrandingAndSizeOptions() {
         brandingTypeSelect.appendChild(option);
     });
 
-    // Обновляем размеры
     updateSizeOptions();
 }
 
@@ -515,11 +370,8 @@ function updateSizeOptions() {
     const brandingType = document.getElementById("brandingType").value;
     const sizeSelect = document.getElementById("size");
 
-    // Очищаем текущие опции размеров
     sizeSelect.innerHTML = "";
-
-    // Добавляем новые опции размеров
-    const sizes = availableSizes[pouchType][brandingType] || [];
+    const sizes = availableSizes[pouchType]?.[brandingType] || [];
     sizes.forEach(size => {
         const option = document.createElement("option");
         option.value = size;
@@ -534,25 +386,28 @@ async function loadHistory() {
     const clearHistoryButton = document.getElementById("clearHistoryButton");
     historyList.innerHTML = "";
 
+    if (!db) {
+        const errorMessage = document.createElement("p");
+        errorMessage.style.color = "red";
+        errorMessage.textContent = "Firebase недоступен: история недоступна.";
+        historyList.appendChild(errorMessage);
+        return;
+    }
+
     try {
         const snapshot = await db.collection("pouchCalculations").orderBy("timestamp", "desc").get();
         const history = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-        // Если история пуста, скрываем кнопку "Очистить историю"
         if (history.length === 0) {
             clearHistoryButton.style.display = "none";
             return;
         }
 
-        // Показываем кнопку "Очистить историю"
         clearHistoryButton.style.display = "inline-block";
-
-        // Добавляем записи в список
         history.forEach((entry, index) => {
             const li = document.createElement("li");
             const dateTime = formatDateTime(entry.timestamp);
             li.textContent = `${dateTime}: ${entry.pouchType}, ${entry.brandingType}, ${entry.size} см, ${entry.quantity} шт, ${entry.totalPrice} рублей`;
-            li.style.cursor = "pointer";
             li.style.setProperty('--index', index);
             li.addEventListener("click", () => {
                 const formattedMaterial = formatMaterialName(entry.pouchType);
@@ -577,27 +432,18 @@ async function loadHistory() {
         });
     } catch (error) {
         console.error("Ошибка при загрузке истории:", error);
-        // Проверяем, если это ошибка оффлайн-режима
-        if (error.message.includes('Оффлайн')) {
-            const historySection = document.getElementById("history");
-            const errorMessage = document.createElement("p");
-            errorMessage.style.color = "orange";
-            errorMessage.textContent = "Оффлайн: история недоступна.";
-            historySection.appendChild(errorMessage);
-        } else {
-            const historySection = document.getElementById("history");
-            const errorMessage = document.createElement("p");
-            errorMessage.style.color = "red";
-            errorMessage.textContent = "Не удалось загрузить историю. Проверьте подключение к интернету.";
-            historySection.appendChild(errorMessage);
-        }
+        const errorMessage = document.createElement("p");
+        errorMessage.style.color = navigator.onLine ? "red" : "orange";
+        errorMessage.textContent = navigator.onLine ? "Не удалось загрузить историю. Проверьте подключение к интернету." : "Оффлайн: история недоступна.";
+        historyList.appendChild(errorMessage);
+        clearHistoryButton.style.display = "none";
     }
 }
 
-// Функция для сохранения расчета в Firestore с ограничением на 15 записей
+// Функция для сохранения расчета в Firestore
 async function saveToHistory(pouchType, brandingType, size, quantity, totalPrice, pricePerUnit) {
+    if (!db) return;
     try {
-        // Добавляем новую запись
         await db.collection("pouchCalculations").add({
             pouchType,
             brandingType,
@@ -608,11 +454,9 @@ async function saveToHistory(pouchType, brandingType, size, quantity, totalPrice
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        // Проверяем количество записей
         const snapshot = await db.collection("pouchCalculations").orderBy("timestamp", "asc").get();
         const totalRecords = snapshot.docs.length;
 
-        // Если записей больше 15, удаляем самые старые
         if (totalRecords > 15) {
             const recordsToDelete = totalRecords - 15;
             const batch = db.batch();
@@ -622,17 +466,16 @@ async function saveToHistory(pouchType, brandingType, size, quantity, totalPrice
             await batch.commit();
         }
 
-        // Обновляем историю
         loadHistory();
     } catch (error) {
         console.error("Ошибка при сохранении в Firestore:", error);
-        // Показываем уведомление пользователю
         document.getElementById("result").innerText = "Ошибка: не удалось сохранить расчет. Проверьте подключение к интернету.";
     }
 }
 
 // Функция для очистки истории
 async function clearHistory() {
+    if (!db) return;
     try {
         const snapshot = await db.collection("pouchCalculations").get();
         const batch = db.batch();
@@ -643,7 +486,6 @@ async function clearHistory() {
         loadHistory();
     } catch (error) {
         console.error("Ошибка при очистке истории:", error);
-        // Показываем уведомление пользователю
         document.getElementById("result").innerText = "Ошибка: не удалось очистить историю. Проверьте подключение к интернету.";
     }
 }
@@ -656,7 +498,6 @@ function calculatePouchPrice() {
     const quantityInput = document.getElementById("quantity").value;
     const quantity = parseInt(quantityInput);
 
-    // Проверка, что количество введено корректно
     if (isNaN(quantity) || quantity <= 0) {
         document.getElementById("result").innerText = "Ошибка: введите корректное количество (положительное число).";
         document.getElementById("calculationText").innerText = "";
@@ -665,7 +506,6 @@ function calculatePouchPrice() {
         return;
     }
 
-    // Проверка минимального количества
     const minQty = minQuantity[brandingType] || 50;
     if (quantity < minQty) {
         document.getElementById("result").innerText = `Ошибка: минимальное количество — ${minQty} шт.`;
@@ -675,40 +515,27 @@ function calculatePouchPrice() {
         return;
     }
 
-    // Определяем категорию количества в зависимости от минимального количества
     let quantityCategory;
     if (minQty === 50) {
-        if (quantity >= 500) {
-            quantityCategory = "500+";
-        } else if (quantity >= 200) {
-            quantityCategory = "200-499";
-        } else {
-            quantityCategory = "50-199";
-        }
+        if (quantity >= 500) quantityCategory = "500+";
+        else if (quantity >= 200) quantityCategory = "200-499";
+        else quantityCategory = "50-199";
     } else {
-        if (quantity >= 500) {
-            quantityCategory = "500+";
-        } else if (quantity >= 200) {
-            quantityCategory = "200-499";
-        } else {
-            quantityCategory = "100-199";
-        }
+        if (quantity >= 500) quantityCategory = "500+";
+        else if (quantity >= 200) quantityCategory = "200-499";
+        else quantityCategory = "100-199";
     }
 
-    // Проверяем, что цены загружены
-    if (!pouchPrices[pouchType] || !pouchPrices[pouchType][brandingType] || !pouchPrices[pouchType][brandingType][size]) {
+    if (!pouchPrices[pouchType]?.[brandingType]?.[size]?.[quantityCategory]) {
         document.getElementById("result").innerText = "Ошибка: цены для выбранных параметров не найдены.";
         return;
     }
 
-    // Получаем цену за 1 штуку
     const pricePerUnit = pouchPrices[pouchType][brandingType][size][quantityCategory];
     const totalPrice = pricePerUnit * quantity;
 
-    // Отображаем результат
     document.getElementById("result").innerText = `Итоговая цена: ${totalPrice} рублей`;
 
-    // Формируем текст с логикой расчета
     const formattedMaterial = formatMaterialName(pouchType);
     const calculationText = `Материал: ${formattedMaterial}\n` +
                            `Брендирование: ${brandingType.toLowerCase()}\n` +
@@ -721,7 +548,6 @@ function calculatePouchPrice() {
     document.getElementById("totalPriceText").innerText = totalPriceText;
     document.getElementById("copyButton").style.display = "inline-block";
 
-    // Запускаем анимацию
     document.getElementById("result").classList.remove("fade-in");
     document.getElementById("calculationDetails").classList.remove("fade-in");
     void document.getElementById("result").offsetWidth;
@@ -729,7 +555,6 @@ function calculatePouchPrice() {
     document.getElementById("result").classList.add("fade-in");
     document.getElementById("calculationDetails").classList.add("fade-in");
 
-    // Сохраняем расчет в Firestore
     saveToHistory(pouchType, brandingType, size, quantity, totalPrice, pricePerUnit);
 }
 
@@ -741,9 +566,7 @@ function copyCalculation() {
     const copyButton = document.getElementById("copyButton");
     navigator.clipboard.writeText(fullText).then(() => {
         copyButton.classList.add("copied");
-        setTimeout(() => {
-            copyButton.classList.remove("copied");
-        }, 1000);
+        setTimeout(() => copyButton.classList.remove("copied"), 1000);
     }).catch(err => {
         console.error("Ошибка при копировании:", err);
     });
@@ -768,12 +591,9 @@ function toggleHistory() {
 window.onload = async function() {
     console.log("Страница загружена, инициализация начата");
 
-    // Инициализируем цены, если их нет
     await initializePouchPrices();
-    // Загружаем цены из Firebase
     await loadPouchPrices();
 
-    // Инициализация типов лент
     const pouchTypeSelect = document.getElementById("pouchType");
     availablePouchTypes.forEach(type => {
         const option = document.createElement("option");
@@ -782,16 +602,10 @@ window.onload = async function() {
         pouchTypeSelect.appendChild(option);
     });
 
-    // Инициализация брендирования и размеров
     updateBrandingAndSizeOptions();
-
-    // Загрузка истории
     loadHistory();
-
-    // Изначально скрываем историю
     document.getElementById("historyContent").classList.add("collapsed");
 
-    // Добавляем обработчик события для клавиши Enter
     document.addEventListener("keydown", function(event) {
         if (event.key === "Enter") {
             event.preventDefault();
