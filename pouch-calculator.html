@@ -11,11 +11,11 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <!-- Добавляем манифест PWA -->
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="/tape-price-calculator/manifest.json">
     <!-- Добавляем мета-теги для iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="/pwa-icon-192.png">
+    <link rel="apple-touch-icon" href="/tape-price-calculator/pwa-icon-192.png">
 </head>
 <body>
     <div class="container">
@@ -79,7 +79,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
+                navigator.serviceWorker.register('/tape-price-calculator/sw.js')
                     .then(registration => {
                         console.log('Service Worker зарегистрирован:', registration);
                     })
