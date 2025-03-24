@@ -5,18 +5,18 @@ const DATA_CACHE = 'data-v1';
 
 // Список ресурсов для кэширования
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/pouch-calculator.html',
-  '/tape-calculator.html',
-  '/styles.css',
-  '/pouch-script.js',
-  '/tape-script.js',
-  '/pwa-icon-192.png',
-  '/pwa-icon-512.png',
-  '/tape-icon.png',
-  '/pouch-icon.png',
-  '/manifest.json'
+  '/tape-price-calculator/',
+  '/tape-price-calculator/index.html',
+  '/tape-price-calculator/pouch-calculator.html',
+  '/tape-price-calculator/tape-calculator.html',
+  '/tape-price-calculator/styles.css',
+  '/tape-price-calculator/pouch-script.js',
+  '/tape-price-calculator/tape-script.js',
+  '/tape-price-calculator/pwa-icon-192.png',
+  '/tape-price-calculator/pwa-icon-512.png',
+  '/tape-price-calculator/tape-icon.png',
+  '/tape-price-calculator/pouch-icon.png',
+  '/tape-price-calculator/manifest.json'
 ];
 
 // Установка Service Worker и кэширование статических ресурсов
