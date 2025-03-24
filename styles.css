@@ -21,13 +21,13 @@ body {
 }
 
 .container {
-    width: 300px; /* Ширина для калькуляторов */
-    position: relative; /* Для позиционирования кнопки "Назад" */
-    padding-top: 60px; /* Отступ сверху для кнопки "Назад" */
+    width: 300px;
+    position: relative;
+    padding-top: 60px;
 }
 
 .menu-container {
-    width: 450px; /* Ширина для начального экрана на десктопе */
+    width: 450px;
 }
 
 /* Заголовки */
@@ -76,8 +76,22 @@ button,
 }
 
 button {
-    background-color: #4CAF50;
     padding: 10px 20px;
+}
+
+button.calculate {
+    background-color: #4CAF50;
+}
+
+button.edit-prices {
+    background-color: #ff9800;
+    margin-left: 10px;
+}
+
+button.show-history {
+    background-color: #007BFF;
+    padding: 5px 10px;
+    font-size: 14px;
 }
 
 button:hover {
@@ -96,7 +110,7 @@ button:active {
     display: flex;
     align-items: center;
     padding: 8px 15px;
-    background-color: #007BFF; /* Синий, как у других акцентных кнопок */
+    background-color: #007BFF;
     text-decoration: none;
     font-size: 16px;
     font-weight: bold;
@@ -220,7 +234,7 @@ input {
 /* Кнопки в истории */
 #toggleHistoryButton,
 #copyButton,
-button[onclick="savePrices()"] {
+#savePricesButton {
     background-color: #007BFF;
     padding: 5px 10px;
     font-size: 14px;
@@ -228,18 +242,20 @@ button[onclick="savePrices()"] {
 
 #toggleHistoryButton:hover,
 #copyButton:hover,
-button[onclick="savePrices()"]:hover {
+#savePricesButton:hover {
     background-color: #0056b3;
 }
 
-#clearHistoryButton {
+#clearHistoryButton,
+#closeEditorButton {
     background-color: #dc3545;
     padding: 5px 10px;
     font-size: 14px;
     margin-top: 10px;
 }
 
-#clearHistoryButton:hover {
+#clearHistoryButton:hover,
+#closeEditorButton:hover {
     background-color: #c82333;
 }
 
@@ -256,7 +272,7 @@ button[onclick="savePrices()"]:hover {
     white-space: pre-wrap;
 }
 
-.calculation-details p::last-line {
+.total-price {
     font-weight: bold;
     color: #333;
 }
@@ -307,18 +323,18 @@ button[onclick="savePrices()"]:hover {
     color: #333;
 }
 
-#priceEditorContent {
+#priceEditorInputs {
     max-height: 300px;
     overflow-y: auto;
     margin-bottom: 15px;
     padding-right: 5px;
 }
 
-#priceEditorContent div {
+#priceEditorInputs div {
     margin-bottom: 3px;
 }
 
-#priceEditorContent label {
+#priceEditorInputs label {
     display: inline-block;
     width: 100px;
     margin-right: 5px;
@@ -328,7 +344,7 @@ button[onclick="savePrices()"]:hover {
     animation: none;
 }
 
-#priceEditorContent input {
+#priceEditorInputs input {
     width: 50px;
     padding: 3px;
     border: 1px solid #ccc;
@@ -338,21 +354,10 @@ button[onclick="savePrices()"]:hover {
     animation: none;
 }
 
-#priceEditorContent input:focus {
+#priceEditorInputs input:focus {
     border-color: #007BFF;
     outline: none;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-}
-
-/* Кнопка "Редактировать цены" */
-button[onclick="openPriceEditor()"] {
-    background-color: #ff9800;
-    margin-left: 10px;
-}
-
-button[onclick="openPriceEditor()"]:hover {
-    background-color: #e68900;
-    animation: pulse 0.5s infinite;
 }
 
 /* Анимации иконок */
@@ -388,136 +393,125 @@ button[onclick="openPriceEditor()"]:hover {
 
 /* Анимации */
 @keyframes slideInFromTop {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeInFromLeft {
-    from {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes fadeInFromRight {
-    from {
-        opacity: 0;
-        transform: translateX(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes pulse {
-    0% {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
-    }
-    70% {
-        transform: scale(1.05);
-        box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
-    }
-    100% {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
-    }
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
 }
 
 @keyframes flash {
-    0% {
-        background-color: #007BFF;
-    }
-    50% {
-        background-color: #28a745;
-        transform: scale(1.2);
-    }
-    100% {
-        background-color: #28a745;
-        transform: scale(1.1);
-    }
+    0% { background-color: #007BFF; }
+    50% { background-color: #28a745; transform: scale(1.2); }
+    100% { background-color: #28a745; transform: scale(1.1); }
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes slideInFromLeft {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* Стили для результата */
+#result {
+    font-size: 18px;
+    color: #333;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+/* Анимация для результатов и деталей расчета */
 .fade-in {
     animation: fadeIn 0.5s ease-in;
 }
 
-/* Адаптивность */
-@media (max-width: 768px) {
+/* Стили для мобильных устройств */
+@media (max-width: 600px) {
+    .container,
     .menu-container {
-        width: 300px;
-    }
-
-    .calculator-selection {
-        flex-direction: column;
-        gap: 20px;
+        width: 90%;
+        padding: 15px;
     }
 
     .calculator-button {
         width: 100%;
-        box-sizing: border-box;
+        padding: 15px;
+        font-size: 16px;
     }
 
-    .tape-animation,
-    .pouch-animation {
-        width: 50px;
-        height: 50px;
-        top: auto;
-        left: 50%;
+    .back-button {
+        top: 10px;
+        left: 10px;
+        padding: 6px 12px;
+        font-size: 14px;
     }
 
-    .tape-animation {
-        bottom: 100%;
-        transform: translateX(-50%) rotate(0deg);
+    h1 {
+        font-size: 20px;
     }
 
-    .tape-button:hover .tape-animation {
-        transform: translateX(-50%) translateY(-60px) rotate(360deg);
-        opacity: 1;
+    h3 {
+        font-size: 16px;
     }
 
-    .pouch-animation {
-        bottom: -10px;
-        transform: translateX(-50%) rotate(0deg);
+    button {
+        padding: 8px 16px;
+        font-size: 14px;
     }
 
-    .pouch-button:hover .pouch-animation {
-        transform: translateX(-50%) translateY(60px) rotate(360deg);
-        opacity: 1;
+    select,
+    input {
+        padding: 6px;
+        font-size: 14px;
     }
 
     .modal-content {
         width: 95%;
-        margin: 15% auto;
+        margin: 20% auto;
+        padding: 10px;
     }
 
-    #priceEditorContent label {
-        width: 80px;
+    #priceEditorInputs {
+        max-height: 200px;
     }
+}
 
-    #priceEditorContent input {
-        width: 40px;
-    }
+/* Стили для скроллбара в модальном окне и истории */
+#priceEditorInputs::-webkit-scrollbar,
+#history ul::-webkit-scrollbar {
+    width: 8px;
+}
+
+#priceEditorInputs::-webkit-scrollbar-track,
+#history ul::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+#priceEditorInputs::-webkit-scrollbar-thumb,
+#history ul::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+#priceEditorInputs::-webkit-scrollbar-thumb:hover,
+#history ul::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
