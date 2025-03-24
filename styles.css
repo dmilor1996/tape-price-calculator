@@ -416,12 +416,12 @@ h3 {
 
 .modal-content {
     background-color: white;
-    margin: 5% auto;
-    padding: 20px;
+    margin: 10% auto; /* Уменьшаем отступ сверху */
+    padding: 15px; /* Уменьшаем внутренние отступы */
     border-radius: 8px; /* Соответствует стилю контейнера */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Соответствует стилю контейнера */
-    width: 80%;
-    max-width: 800px;
+    width: 90%; /* Уменьшаем ширину */
+    max-width: 500px; /* Уменьшаем максимальную ширину */
     text-align: left;
     animation: slideInFromTop 0.5s ease-out; /* Используем существующую анимацию */
 }
@@ -429,7 +429,7 @@ h3 {
 .close {
     color: #aaa;
     float: right;
-    font-size: 28px;
+    font-size: 24px; /* Уменьшаем размер крестика */
     font-weight: bold;
     cursor: pointer;
     transition: color 0.3s ease;
@@ -441,52 +441,54 @@ h3 {
 }
 
 #priceEditorContent {
-    max-height: 400px;
+    max-height: 300px; /* Уменьшаем максимальную высоту */
     overflow-y: auto;
-    margin-bottom: 20px;
-    padding-right: 10px;
+    margin-bottom: 15px; /* Уменьшаем отступ снизу */
+    padding-right: 5px; /* Уменьшаем отступ справа */
 }
 
 #priceEditorContent h3 {
-    font-size: 18px;
+    font-size: 16px; /* Уменьшаем размер заголовка */
     color: #333;
     margin-top: 0;
-    margin-bottom: 10px;
+    margin-bottom: 8px; /* Уменьшаем отступ снизу */
     font-weight: bold;
 }
 
 #priceEditorContent h4 {
-    font-size: 16px;
+    font-size: 14px; /* Уменьшаем размер подзаголовка */
     color: #555;
-    margin: 10px 0;
+    margin: 8px 0; /* Уменьшаем отступы */
     font-weight: bold;
 }
 
 #priceEditorContent h5 {
-    font-size: 14px;
+    font-size: 12px; /* Уменьшаем размер текста */
     color: #777;
-    margin: 5px 0;
+    margin: 3px 0; /* Уменьшаем отступы */
 }
 
 #priceEditorContent div {
-    margin-bottom: 5px;
+    margin-bottom: 3px; /* Уменьшаем отступ между строками */
 }
 
 #priceEditorContent label {
     display: inline-block;
-    width: 150px;
-    margin-right: 10px;
+    width: 100px; /* Уменьшаем ширину метки */
+    margin-right: 5px; /* Уменьшаем отступ справа */
     font-weight: normal;
     color: #555;
+    font-size: 12px; /* Уменьшаем размер шрифта */
     animation: none; /* Убираем анимацию для меток в редакторе */
 }
 
 #priceEditorContent input {
-    width: 60px;
-    padding: 5px;
+    width: 50px; /* Уменьшаем ширину поля ввода */
+    padding: 3px; /* Уменьшаем внутренние отступы */
     border: 1px solid #ccc;
     border-radius: 4px;
     background: none; /* Убираем стрелку для input в редакторе */
+    font-size: 12px; /* Уменьшаем размер шрифта */
     animation: none; /* Убираем анимацию для полей ввода в редакторе */
 }
 
@@ -511,6 +513,8 @@ button[onclick="savePrices()"] {
     background-color: #007BFF; /* Синий цвет, как у других акцентных кнопок */
     margin: 0 auto;
     display: block;
+    padding: 8px 16px; /* Уменьшаем размер кнопки */
+    font-size: 14px; /* Уменьшаем размер шрифта */
 }
 
 button[onclick="savePrices()"]:hover {
@@ -521,15 +525,15 @@ button[onclick="savePrices()"]:hover {
 /* Адаптивность для модального окна на мобильных устройствах */
 @media (max-width: 768px) {
     .modal-content {
-        width: 90%;
-        margin: 10% auto;
+        width: 95%; /* Еще больше уменьшаем ширину на мобильных */
+        margin: 15% auto; /* Увеличиваем отступ сверху для лучшей видимости */
     }
 
     #priceEditorContent label {
-        width: 120px;
+        width: 80px; /* Уменьшаем ширину метки на мобильных */
     }
 
     #priceEditorContent input {
-        width: 50px;
+        width: 40px; /* Уменьшаем ширину поля ввода на мобильных */
     }
 }
