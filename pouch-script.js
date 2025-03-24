@@ -143,9 +143,6 @@ async function initializePouchPricesInFirebase() {
     }
 }
 
-// Вызовите эту функцию один раз, чтобы загрузить данные
-initializePouchPricesInFirebase();
-
 // Минимальное количество для каждого типа брендирования
 const minQuantity = {
     "Без брендирования, лента хлопок": 50,
@@ -174,6 +171,9 @@ if (typeof firebase === "undefined") {
 }
 
 const db = firebase.firestore();
+
+// Вызовите эту функцию один раз, чтобы загрузить данные
+initializePouchPricesInFirebase();
 
 // Функция для форматирования даты и времени
 function formatDateTime(timestamp) {
