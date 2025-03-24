@@ -1,80 +1,15 @@
-// Данные о ценах
-const pouchPrices = {
-    "Хлопок": {
-        "Без брендирования, лента хлопок": {
-            "8x10": { "50-199": 85, "200-499": 80, "500+": 70 },
-            "10x15": { "50-199": 95, "200-499": 90, "500+": 80 },
-            "20x30": { "50-199": 110, "200-499": 105, "500+": 100 }
-        },
-        "Брендирование штампом": {
-            "8x10": { "100-199": 90, "200-499": 85, "500+": 75 },
-            "10x15": { "100-199": 100, "200-499": 95, "500+": 85 },
-            "20x30": { "100-199": 120, "200-499": 110, "500+": 105 }
-        },
-        "Термоперенос": {
-            "8x10": { "100-199": 95, "200-499": 90, "500+": 85 },
-            "10x15": { "100-199": 105, "200-499": 100, "500+": 95 },
-            "20x30": { "100-199": 125, "200-499": 120, "500+": 115 }
-        },
-        "С помощью ленты с печатью": {
-            "8x10": { "50-199": 90, "200-499": 85, "500+": 80 },
-            "10x15": { "50-199": 100, "200-499": 95, "500+": 90 },
-            "20x30": { "50-199": 115, "200-499": 110, "500+": 105 }
-        }
-    },
-    "Хлопок с двойной лентой": {
-        "Термоперенос": {
-            "8x10": { "100-199": 155, "200-499": 145, "500+": 135 },
-            "15x15": { "100-199": 180, "200-499": 170, "500+": 145 },
-            "25x25": { "100-199": 220, "200-499": 210, "500+": 175 },
-            "40x40": { "100-199": 285, "200-499": 275, "500+": 225 }
-        },
-        "Штамп": {
-            "8x10": { "100-199": 145, "200-499": 140, "500+": 122 },
-            "15x15": { "100-199": 165, "200-499": 160, "500+": 133 },
-            "25x25": { "100-199": 195, "200-499": 185, "500+": 155 },
-            "40x40": { "100-199": 255, "200-499": 245, "500+": 205 }
-        }
-    },
-    "Саржа с двойной лентой": {
-        "Термоперенос": {
-            "8x10": { "100-199": 175, "200-499": 165, "500+": 140 },
-            "15x15": { "100-199": 210, "200-499": 195, "500+": 170 },
-            "25x25": { "100-199": 265, "200-499": 255, "500+": 220 },
-            "40x40": { "100-199": 345, "200-499": 335, "500+": 305 }
-        }
-    },
-    "Фатин": {
-        "Лента с логотипом": {
-            "8x15": { "50-199": 105, "200-499": 80, "500+": 75 },
-            "14x20": { "50-199": 115, "200-499": 90, "500+": 85 },
-            "18x30": { "50-199": 130, "200-499": 105, "500+": 100 }
-        }
-    },
-    "Велюр": {
-        "Лента с логотипом": {
-            "7x9": { "50-199": 90, "200-499": 85, "500+": 80 },
-            "9x12": { "50-199": 100, "200-499": 95, "500+": 90 },
-            "12x18": { "50-199": 115, "200-499": 110, "500+": 105 }
-        },
-        "Термоперенос": {
-            "7x9": { "100-199": 115, "200-499": 105, "500+": 90 },
-            "9x12": { "100-199": 125, "200-499": 115, "500+": 95 },
-            "12x18": { "100-199": 135, "200-499": 125, "500+": 110 }
-        }
-    },
-    "Велюр с двойной лентой": {
-        "Термоперенос": {
-            "8x10": { "100-199": 145, "200-499": 140, "500+": 120 },
-            "15x15": { "100-199": 185, "200-499": 175, "500+": 160 },
-            "25x25": { "100-199": 265, "200-499": 255, "500+": 240 },
-            "40x40": { "100-199": 410, "200-499": 395, "500+": 380 }
-        }
-    }
-};
+// Глобальная переменная для хранения цен
+let pouchPrices = {};
 
 // Доступные типы лент, брендирования и размеры
-const availablePouchTypes = Object.keys(pouchPrices);
+const availablePouchTypes = [
+    "Хлопок",
+    "Хлопок с двойной лентой",
+    "Саржа с двойной лентой",
+    "Фатин",
+    "Велюр",
+    "Велюр с двойной лентой"
+];
 
 const availableBrandingTypes = {
     "Хлопок": [
@@ -128,21 +63,6 @@ const availableSizes = {
     }
 };
 
-// Временная функция для загрузки начальных данных в Firebase
-async function initializePouchPricesInFirebase() {
-    try {
-        for (const material in pouchPrices) {
-            await db.collection("pouchPrices").doc(material).set({
-                material: material,
-                prices: pouchPrices[material]
-            });
-        }
-        console.log("Цены успешно загружены в Firebase!");
-    } catch (error) {
-        console.error("Ошибка при загрузке цен в Firebase:", error);
-    }
-}
-
 // Минимальное количество для каждого типа брендирования
 const minQuantity = {
     "Без брендирования, лента хлопок": 50,
@@ -172,8 +92,116 @@ if (typeof firebase === "undefined") {
 
 const db = firebase.firestore();
 
-// Вызовите эту функцию один раз, чтобы загрузить данные
-initializePouchPricesInFirebase();
+// Функция для загрузки цен из Firebase
+async function loadPouchPrices() {
+    try {
+        const snapshot = await db.collection("pouchPrices").get();
+        pouchPrices = {};
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            pouchPrices[data.material] = data.prices;
+        });
+        console.log("Цены успешно загружены из Firebase:", pouchPrices);
+    } catch (error) {
+        console.error("Ошибка при загрузке цен из Firebase:", error);
+        document.getElementById("result").innerText = "Ошибка: не удалось загрузить цены. Проверьте подключение к интернету.";
+    }
+}
+
+// Функция для открытия редактора цен
+function openPriceEditor() {
+    const modal = document.getElementById("priceEditorModal");
+    const content = document.getElementById("priceEditorContent");
+    content.innerHTML = ""; // Очищаем содержимое
+
+    // Перебираем все материалы и их цены
+    for (const material in pouchPrices) {
+        const materialSection = document.createElement("div");
+        materialSection.innerHTML = `<h3>${material}</h3>`;
+
+        // Перебираем типы брендирования
+        for (const brandingType in pouchPrices[material]) {
+            const brandingSection = document.createElement("div");
+            brandingSection.innerHTML = `<h4>${brandingType}</h4>`;
+
+            // Перебираем размеры
+            for (const size in pouchPrices[material][brandingType]) {
+                const sizeSection = document.createElement("div");
+                sizeSection.innerHTML = `<h5>Размер: ${size}</h5>`;
+
+                // Перебираем категории количества
+                for (const quantityCategory in pouchPrices[material][brandingType][size]) {
+                    const price = pouchPrices[material][brandingType][size][quantityCategory];
+                    const inputId = `price-${material}-${brandingType}-${size}-${quantityCategory}`.replace(/[^a-zA-Z0-9]/g, '-');
+                    const priceInput = `
+                        <div>
+                            <label>${quantityCategory}:</label>
+                            <input type="number" id="${inputId}" value="${price}" min="0" step="1">
+                        </div>
+                    `;
+                    sizeSection.innerHTML += priceInput;
+                }
+                brandingSection.appendChild(sizeSection);
+            }
+            materialSection.appendChild(brandingSection);
+        }
+        content.appendChild(materialSection);
+    }
+
+    modal.style.display = "block";
+}
+
+// Функция для закрытия редактора цен
+function closePriceEditor() {
+    const modal = document.getElementById("priceEditorModal");
+    modal.style.display = "none";
+}
+
+// Функция для сохранения цен в Firebase
+async function savePrices() {
+    try {
+        const newPrices = {};
+        // Собираем новые цены из полей ввода
+        for (const material in pouchPrices) {
+            newPrices[material] = {};
+            for (const brandingType in pouchPrices[material]) {
+                newPrices[material][brandingType] = {};
+                for (const size in pouchPrices[material][brandingType]) {
+                    newPrices[material][brandingType][size] = {};
+                    for (const quantityCategory in pouchPrices[material][brandingType][size]) {
+                        const inputId = `price-${material}-${brandingType}-${size}-${quantityCategory}`.replace(/[^a-zA-Z0-9]/g, '-');
+                        const input = document.getElementById(inputId);
+                        const newPrice = parseInt(input.value);
+                        if (isNaN(newPrice) || newPrice < 0) {
+                            alert(`Ошибка: цена для ${material}, ${brandingType}, ${size}, ${quantityCategory} должна быть положительным числом.`);
+                            return;
+                        }
+                        newPrices[material][brandingType][size][quantityCategory] = newPrice;
+                    }
+                }
+            }
+        }
+
+        // Сохраняем новые цены в Firebase
+        for (const material in newPrices) {
+            await db.collection("pouchPrices").doc(material).set({
+                material: material,
+                prices: newPrices[material]
+            });
+        }
+
+        // Обновляем локальную переменную pouchPrices
+        pouchPrices = newPrices;
+        console.log("Цены успешно обновлены:", pouchPrices);
+
+        // Закрываем модальное окно
+        closePriceEditor();
+        alert("Цены успешно сохранены!");
+    } catch (error) {
+        console.error("Ошибка при сохранении цен в Firebase:", error);
+        alert("Ошибка при сохранении цен. Проверьте подключение к интернету.");
+    }
+}
 
 // Функция для форматирования даты и времени
 function formatDateTime(timestamp) {
@@ -374,16 +402,14 @@ function calculatePouchPrice() {
     // Определяем категорию количества в зависимости от минимального количества
     let quantityCategory;
     if (minQty === 50) {
-        // Для типов с минимальным количеством 50 (например, "Лента с логотипом", "Без брендирования, лента хлопок")
         if (quantity >= 500) {
             quantityCategory = "500+";
         } else if (quantity >= 200) {
             quantityCategory = "200-499";
         } else {
-            quantityCategory = "50-199"; // Используем категорию, которая есть в данных
+            quantityCategory = "50-199";
         }
     } else {
-        // Для типов с минимальным количеством 100 (например, "Термоперенос", "Штамп")
         if (quantity >= 500) {
             quantityCategory = "500+";
         } else if (quantity >= 200) {
@@ -391,6 +417,12 @@ function calculatePouchPrice() {
         } else {
             quantityCategory = "100-199";
         }
+    }
+
+    // Проверяем, что цены загружены
+    if (!pouchPrices[pouchType] || !pouchPrices[pouchType][brandingType] || !pouchPrices[pouchType][brandingType][size]) {
+        document.getElementById("result").innerText = "Ошибка: цены для выбранных параметров не найдены.";
+        return;
     }
 
     // Получаем цену за 1 штуку
@@ -429,7 +461,7 @@ function calculatePouchPrice() {
 function copyCalculation() {
     const calculationText = document.getElementById("calculationText").innerText;
     const totalPriceText = document.getElementById("totalPriceText").innerText;
-    const fullText = `${calculationText}${totalPriceText}`; // Объединяем оба текста
+    const fullText = `${calculationText}${totalPriceText}`;
     const copyButton = document.getElementById("copyButton");
     navigator.clipboard.writeText(fullText).then(() => {
         copyButton.classList.add("copied");
@@ -457,8 +489,11 @@ function toggleHistory() {
 }
 
 // Инициализация при загрузке страницы
-window.onload = function() {
+window.onload = async function() {
     console.log("Страница загружена, инициализация начата");
+
+    // Загружаем цены из Firebase
+    await loadPouchPrices();
 
     // Инициализация типов лент
     const pouchTypeSelect = document.getElementById("pouchType");
@@ -481,8 +516,8 @@ window.onload = function() {
     // Добавляем обработчик события для клавиши Enter
     document.addEventListener("keydown", function(event) {
         if (event.key === "Enter") {
-            event.preventDefault(); // Предотвращаем стандартное поведение (например, отправку формы)
-            calculatePouchPrice(); // Вызываем функцию расчета
+            event.preventDefault();
+            calculatePouchPrice();
         }
     });
 
