@@ -5,66 +5,66 @@ let prices = {};
 const defaultTapePrices = {
     "Президент": {
         15: {
-            "50 м": 100,
-            "100 м": 90,
-            "150 м": 80,
-            "от 200 м": 70
+            "50 м": 45,
+            "100 м": 40,
+            "150 м": 40,
+            "от 200 м": 35
         },
         25: {
-            "50 м": 120,
-            "100 м": 110,
-            "150 м": 100,
-            "от 200 м": 90
+            "50 м": 55,
+            "100 м": 50,
+            "150 м": 50,
+            "от 200 м": 45
         }
     },
     "Классическая": {
         10: {
-            "50 м": 50,
-            "100 м": 45,
-            "150 м": 40,
-            "от 200 м": 35
+            "50 м": 30,
+            "100 м": 25,
+            "150 м": 25,
+            "от 200 м": 20
         },
         15: {
-            "50 м": 60,
-            "100 м": 55,
-            "150 м": 50,
-            "от 200 м": 45
+            "50 м": 30,
+            "100 м": 25,
+            "150 м": 25,
+            "от 200 м": 20
         },
         20: {
-            "50 м": 70,
-            "100 м": 65,
-            "150 м": 60,
-            "от 200 м": 55
+            "50 м": 35,
+            "100 м": 30,
+            "150 м": 30,
+            "от 200 м": 25
         },
         25: {
-            "50 м": 80,
-            "100 м": 75,
-            "150 м": 70,
-            "от 200 м": 65
+            "50 м": 40,
+            "100 м": 40,
+            "150 м": 35,
+            "от 200 м": 35
         },
         30: {
-            "50 м": 90,
-            "100 м": 85,
-            "150 м": 80,
-            "от 200 м": 75
+            "50 м": 40,
+            "100 м": 40,
+            "150 м": 35,
+            "от 200 м": 35
         },
         40: {
-            "50 м": 100,
-            "100 м": 95,
-            "150 м": 90,
-            "от 200 м": 85
+            "50 м": 45,
+            "100 м": 45,
+            "150 м": 40,
+            "от 200 м": 40
         },
         50: {
-            "50 м": 110,
-            "100 м": 105,
-            "150 м": 100,
-            "от 200 м": 95
+            "50 м": 45,
+            "100 м": 45,
+            "150 м": 40,
+            "от 200 м": 40
         },
         60: {
-            "50 м": 120,
-            "100 м": 115,
-            "150 м": 110,
-            "от 200 м": 105
+            "50 м": 50,
+            "100 м": 50,
+            "150 м": 45,
+            "от 200 м": 45
         }
     }
 };
@@ -282,7 +282,7 @@ async function loadHistory() {
             li.addEventListener("click", () => {
                 // При клике показываем детали расчета
                 const calculationText = `Тип ленты: ${entry.tapeType}, ширина: ${entry.width} мм, длина: ${entry.length} м\n` +
-                                       `Цена за 1 м = ${entry.totalPrice / entry.length} рублей\n` +
+                                       `Цена за 1 м = ${entry.totalPrice / entry.length} рублей (категория: ${entry.lengthCategory})\n` +
                                        `Итоговая цена = ${entry.totalPrice / entry.length} * ${entry.length} = ${entry.totalPrice} рублей`;
                 document.getElementById("calculationText").innerText = calculationText;
                 document.getElementById("copyButton").style.display = "inline-block";
@@ -303,7 +303,7 @@ async function loadHistory() {
 }
 
 // Функция для сохранения расчета в Firestore с ограничением на 15 записей
-async function saveToHistory(tapeType, width, length, totalPrice) {
+async function saveToHistory(tapeType, width, length, totalPrice, lengthCategory) {
     try {
         // Добавляем новую запись
         await db.collection("calculations").add({
@@ -311,6 +311,7 @@ async function saveToHistory(tapeType, width, length, totalPrice) {
             width,
             length,
             totalPrice,
+            lengthCategory,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
 
@@ -364,16 +365,29 @@ function calculatePrice() {
         return;
     }
 
+    // Проверка кратности 50
+    if (length % 50 !== 0) {
+        document.getElementById("result").innerText = "Ошибка: длина должна быть кратна 50 (например, 50, 100, 150, 200 и т.д.).";
+        document.getElementById("calculationText").innerText = "";
+        document.getElementById("copyButton").style.display = "none";
+        return;
+    }
+
     // Определяем категорию длины рулона
     let lengthCategory;
-    if (length <= 50) {
+    if (length === 50) {
         lengthCategory = "50 м";
-    } else if (length <= 100) {
+    } else if (length === 100) {
         lengthCategory = "100 м";
-    } else if (length <= 150) {
+    } else if (length === 150) {
         lengthCategory = "150 м";
-    } else {
+    } else if (length >= 200) {
         lengthCategory = "от 200 м";
+    } else {
+        document.getElementById("result").innerText = "Ошибка: длина должна быть 50, 100, 150 или 200 м и более.";
+        document.getElementById("calculationText").innerText = "";
+        document.getElementById("copyButton").style.display = "none";
+        return;
     }
 
     // Проверяем, что цены загружены
@@ -393,7 +407,7 @@ function calculatePrice() {
 
     // Формируем текст с логикой расчета
     const calculationText = `Тип ленты: ${tapeType}, ширина: ${width} мм, длина: ${length} м\n` +
-                           `Цена за 1 м = ${pricePerMeter} рублей\n` +
+                           `Цена за 1 м = ${pricePerMeter} рублей (категория: ${lengthCategory})\n` +
                            `Итоговая цена = ${pricePerMeter} * ${length} = ${totalPrice} рублей`;
 
     // Отображаем логику расчета
@@ -411,7 +425,7 @@ function calculatePrice() {
     document.getElementById("calculationDetails").classList.add("fade-in");
 
     // Сохраняем расчет в Firestore
-    saveToHistory(tapeType, width, length, totalPrice);
+    saveToHistory(tapeType, width, length, totalPrice, lengthCategory);
 }
 
 // Функция для копирования текста с визуальной обратной связью
