@@ -1,36 +1,24 @@
 {
-  "name": "Калькулятор цен",
-  "short_name": "PriceCalc",
-  "description": "Калькулятор цен на ленты и мешочки",
-  "start_url": "/tape-price-calculator/index.html",
-  "display": "standalone",
-  "background_color": "#f4f4f4",
-  "theme_color": "#4CAF50",
-  "icons": [
-    {
-      "src": "/tape-price-calculator/pwa-icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/tape-price-calculator/pwa-icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    },
-    {
-      "src": "/tape-price-calculator/pwa-icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "/tape-price-calculator/pwa-icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    }
-  ],
-  "lang": "ru",
-  "dir": "ltr",
-  "orientation": "portrait"
+    "name": "Tape Price Calculator",
+    "short_name": "TapeCalc",
+    "description": "Калькулятор цен на ленты и мешочки",
+    "start_url": "/tape-price-calculator/index.html",
+    "display": "standalone",
+    "background_color": "#f4f4f4",
+    "theme_color": "#4CAF50",
+    "icons": [
+        {
+            "src": "/tape-price-calculator/pwa-icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/tape-price-calculator/pwa-icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "lang": "ru",
+    "dir": "ltr",
+    "orientation": "portrait"
 }
