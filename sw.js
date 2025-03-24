@@ -1,106 +1,81 @@
-// Имя кэша для статических ресурсов
-const STATIC_CACHE = 'static-v1';
-// Имя кэша для данных Firebase
-const DATA_CACHE = 'data-v1';
+// Версия кэша
+const CACHE_NAME = 'tape-price-calculator-v1';
 
 // Список ресурсов для кэширования
-const STATIC_ASSETS = [
-  '/tape-price-calculator/',
-  '/tape-price-calculator/index.html',
-  '/tape-price-calculator/pouch-calculator.html',
-  '/tape-price-calculator/tape-calculator.html',
-  '/tape-price-calculator/styles.css',
-  '/tape-price-calculator/pouch-script.js',
-  '/tape-price-calculator/tape-script.js',
-  '/tape-price-calculator/pwa-icon-192.png',
-  '/tape-price-calculator/pwa-icon-512.png',
-  '/tape-price-calculator/tape-icon.png',
-  '/tape-price-calculator/pouch-icon.png',
-  '/tape-price-calculator/manifest.json'
+const urlsToCache = [
+    '/tape-price-calculator/',
+    '/tape-price-calculator/index.html',
+    '/tape-price-calculator/tape-calculator.html',
+    '/tape-price-calculator/pouch-calculator.html',
+    '/tape-price-calculator/styles.css',
+    '/tape-price-calculator/tape-script.js',
+    '/tape-price-calculator/pouch-script.js',
+    '/tape-price-calculator/tape-icon.png',
+    '/tape-price-calculator/pouch-icon.png',
+    '/tape-price-calculator/pwa-icon-192.png',
+    '/tape-price-calculator/pwa-icon-512.png',
+    '/tape-price-calculator/manifest.json',
+    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
+    'https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js',
+    'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js'
 ];
 
-// Установка Service Worker и кэширование статических ресурсов
+// Установка Service Worker и кэширование ресурсов
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(STATIC_CACHE).then(cache => {
-      console.log('Кэширование статических ресурсов');
-      return cache.addAll(STATIC_ASSETS);
-    })
-  );
-  // Активируем Service Worker сразу после установки
-  self.skipWaiting();
+    event.waitUntil(
+        caches.open(CACHE_NAME)
+            .then(cache => {
+                console.log('Кэширование ресурсов...');
+                return cache.addAll(urlsToCache);
+            })
+            .then(() => self.skipWaiting())
+    );
 });
 
-// Активация Service Worker и удаление старых кэшей
+// Активация Service Worker и удаление старого кэша
 self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== STATIC_CACHE && cacheName !== DATA_CACHE) {
-            console.log('Удаление старого кэша:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
-  );
-  // Захватываем клиентов (страницы) сразу после активации
-  self.clients.claim();
+    event.waitUntil(
+        caches.keys().then(cacheNames => {
+            return Promise.all(
+                cacheNames.map(cacheName => {
+                    if (cacheName !== CACHE_NAME) {
+                        console.log('Удаление старого кэша:', cacheName);
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        }).then(() => self.clients.claim())
+    );
 });
 
-// Обработка запросов
+// Обработка запросов (стратегия "Cache First, Then Network")
 self.addEventListener('fetch', event => {
-  const requestUrl = new URL(event.request.url);
-
-  // Проверяем, является ли запрос запросом к Firebase
-  const isFirebaseRequest = requestUrl.origin === 'https://firestore.googleapis.com';
-
-  if (event.request.method !== 'GET') {
-    // Пропускаем не-GET запросы
-    event.respondWith(fetch(event.request));
-    return;
-  }
-
-  if (STATIC_ASSETS.includes(requestUrl.pathname) || requestUrl.pathname === '/') {
-    // Для статических ресурсов используем стратегию "Cache First"
     event.respondWith(
-      caches.match(event.request).then(response => {
-        return response || fetch(event.request).then(fetchResponse => {
-          return caches.open(STATIC_CACHE).then(cache => {
-            cache.put(event.request, fetchResponse.clone());
-            return fetchResponse;
-          });
-        });
-      })
+        caches.match(event.request)
+            .then(response => {
+                // Если ресурс есть в кэше, возвращаем его
+                if (response) {
+                    return response;
+                }
+                // Иначе делаем запрос в сеть
+                return fetch(event.request)
+                    .then(response => {
+                        // Кэшируем только успешные ответы (status 200) и основные ресурсы (не API)
+                        if (!response || response.status !== 200 || response.type !== 'basic') {
+                            return response;
+                        }
+                        // Клонируем ответ, так как он может быть использован только один раз
+                        const responseToCache = response.clone();
+                        caches.open(CACHE_NAME)
+                            .then(cache => {
+                                cache.put(event.request, responseToCache);
+                            });
+                        return response;
+                    })
+                    .catch(() => {
+                        // Если запрос не удался и ресурса нет в кэше, возвращаем заглушку (например, для оффлайн-страницы)
+                        return caches.match('/tape-price-calculator/index.html');
+                    });
+            })
     );
-  } else if (isFirebaseRequest) {
-    // Для запросов к Firebase используем стратегию "Network First, Cache Fallback"
-    event.respondWith(
-      fetch(event.request)
-        .then(networkResponse => {
-          // Сохраняем ответ в кэш
-          return caches.open(DATA_CACHE).then(cache => {
-            cache.put(event.request, networkResponse.clone());
-            return networkResponse;
-          });
-        })
-        .catch(() => {
-          // Если сеть недоступна, возвращаем данные из кэша
-          return caches.match(event.request).then(cachedResponse => {
-            if (cachedResponse) {
-              return cachedResponse;
-            }
-            // Если данных в кэше нет, возвращаем ошибку
-            return new Response(JSON.stringify({ error: 'Оффлайн: данные недоступны' }), {
-              status: 503,
-              headers: { 'Content-Type': 'application/json' }
-            });
-          });
-        })
-    );
-  } else {
-    // Для остальных запросов (например, Font Awesome) используем сеть
-    event.respondWith(fetch(event.request));
-  }
 });
