@@ -1,87 +1,96 @@
-// Версия кэша
-const CACHE_NAME = 'tape-price-calculator-v1';
-
-// Список ресурсов для кэширования
+const CACHE_NAME = 'price-calculator-cache-v1';
 const urlsToCache = [
-    '/tape-price-calculator/',
-    '/tape-price-calculator/index.html',
-    '/tape-price-calculator/tape-calculator.html',
-    '/tape-price-calculator/pouch-calculator.html',
-    '/tape-price-calculator/styles.css',
-    '/tape-price-calculator/tape-script.js',
-    '/tape-price-calculator/pouch-script.js',
-    '/tape-price-calculator/tape-icon.png',
-    '/tape-price-calculator/pouch-icon.png',
-    '/tape-price-calculator/pwa-icon-192.png',
-    '/tape-price-calculator/pwa-icon-512.png',
-    '/tape-price-calculator/manifest.json'
+  '/',
+  '/index.html',
+  '/tape-calculator.html',
+  '/pouch-calculator.html',
+  '/styles.css',
+  '/tape-script.js',
+  '/pouch-script.js',
+  '/tape-icon.png',
+  '/pouch-icon.png',
+  '/manifest.json'
 ];
 
 // Установка Service Worker и кэширование ресурсов
 self.addEventListener('install', event => {
-    event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then(cache => {
-                console.log('Кэширование ресурсов...');
-                return Promise.all(
-                    urlsToCache.map(url => {
-                        return fetch(url, { mode: 'no-cors' })
-                            .then(response => {
-                                if (!response.ok) {
-                                    console.warn(`Не удалось кэшировать ${url}`);
-                                    return;
-                                }
-                                return cache.put(url, response);
-                            })
-                            .catch(err => {
-                                console.error(`Ошибка кэширования ${url}:`, err);
-                            });
-                    })
-                );
-            })
-            .then(() => self.skipWaiting())
-    );
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => {
+        console.log('Кэширование ресурсов');
+        return cache.addAll(urlsToCache);
+      })
+      .then(() => {
+        // Пропускаем ожидание и сразу активируем Service Worker
+        self.skipWaiting();
+      })
+  );
 });
 
-// Активация Service Worker и удаление старого кэша
+// Активация Service Worker и удаление старых кэшей
 self.addEventListener('activate', event => {
-    event.waitUntil(
-        caches.keys().then(cacheNames => {
-            return Promise.all(
-                cacheNames.map(cacheName => {
-                    if (cacheName !== CACHE_NAME) {
-                        console.log('Удаление старого кэша:', cacheName);
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
-        }).then(() => self.clients.claim())
-    );
+  const cacheWhitelist = [CACHE_NAME];
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (!cacheWhitelist.includes(cacheName)) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+    .then(() => {
+      // Захватываем клиентов (страницы) сразу после активации
+      self.clients.claim();
+    })
+  );
 });
 
-// Обработка запросов (стратегия "Cache First, Then Network")
+// Обработка запросов (стратегия "Stale-While-Revalidate")
 self.addEventListener('fetch', event => {
+  // Проверяем, является ли запрос запросом к Firebase
+  const isFirebaseRequest = event.request.url.includes('firestore.googleapis.com');
+
+  if (isFirebaseRequest) {
+    // Для запросов к Firebase используем "Network First"
     event.respondWith(
-        caches.match(event.request)
-            .then(response => {
-                if (response) {
-                    return response;
-                }
-                return fetch(event.request)
-                    .then(response => {
-                        if (!response || response.status !== 200 || response.type !== 'basic') {
-                            return response;
-                        }
-                        const responseToCache = response.clone();
-                        caches.open(CACHE_NAME)
-                            .then(cache => {
-                                cache.put(event.request, responseToCache);
-                            });
-                        return response;
-                    })
-                    .catch(() => {
-                        return caches.match('/tape-price-calculator/index.html');
-                    });
-            })
+      fetch(event.request)
+        .then(networkResponse => {
+          return networkResponse;
+        })
+        .catch(() => {
+          return new Response(JSON.stringify({ error: "Offline mode" }), {
+            status: 503,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        })
     );
+  } else {
+    // Для статических ресурсов используем "Stale-While-Revalidate"
+    event.respondWith(
+      caches.open(CACHE_NAME).then(cache => {
+        return cache.match(event.request).then(cachedResponse => {
+          const fetchPromise = fetch(event.request).then(networkResponse => {
+            // Обновляем кэш с новым ответом
+            cache.put(event.request, networkResponse.clone());
+            return networkResponse;
+          }).catch(() => {
+            // Если сеть недоступна, возвращаем кэшированный ответ
+            return cachedResponse;
+          });
+
+          // Возвращаем кэшированный ответ (если есть), пока загружается новый
+          return cachedResponse || fetchPromise;
+        });
+      })
+    );
+  }
+});
+
+// Обработка сообщений от клиента (например, для принудительного обновления)
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
