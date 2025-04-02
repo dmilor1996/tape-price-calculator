@@ -1,4 +1,4 @@
-const CACHE_NAME = 'price-calculator-cache-v3';
+const CACHE_NAME = 'price-calculator-cache-v4';
 const urlsToCache = [
   '/tape-price-calculator/',
   '/tape-price-calculator/index.html',
