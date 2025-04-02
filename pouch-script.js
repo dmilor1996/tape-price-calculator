@@ -1,63 +1,69 @@
 // Регистрация Service Worker с проверкой обновлений
 if ('serviceWorker' in navigator) {
   console.log('Service Worker поддерживается, начинаем регистрацию...');
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/tape-price-calculator/sw.js')
-      .then(registration => {
-        console.log('Service Worker успешно зарегистрирован:', registration);
 
-        // Проверяем, есть ли обновление Service Worker
-        registration.addEventListener('updatefound', () => {
-          console.log('Обнаружено обновление Service Worker');
-          const newWorker = registration.installing;
-          newWorker.addEventListener('statechange', () => {
-            console.log('Состояние нового Service Worker:', newWorker.state);
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              console.log('Новая версия Service Worker установлена, показываем уведомление');
-              const updateMessage = document.createElement('div');
-              updateMessage.style.position = 'fixed';
-              updateMessage.style.bottom = '20px';
-              updateMessage.style.left = '50%';
-              updateMessage.style.transform = 'translateX(-50%)';
-              updateMessage.style.backgroundColor = '#4CAF50';
-              updateMessage.style.color = 'white';
-              updateMessage.style.padding = '10px 20px';
-              updateMessage.style.borderRadius = '5px';
-              updateMessage.style.zIndex = '1000';
-              updateMessage.innerHTML = `
-                Новая версия приложения доступна!
-                <button onclick="updateApp()">Обновить</button>
-              `;
-              document.body.appendChild(updateMessage);
+  // Регистрируем Service Worker сразу, без ожидания события 'load'
+  navigator.serviceWorker.register('/tape-price-calculator/sw.js')
+    .then(registration => {
+      console.log('Service Worker успешно зарегистрирован:', registration);
 
-              window.updateApp = () => {
-                console.log('Пользователь нажал "Обновить", отправляем SKIP_WAITING');
-                newWorker.postMessage({ type: 'SKIP_WAITING' });
-                window.location.reload();
-              };
-            }
-          });
+      // Проверяем обновления сразу после регистрации
+      console.log('Проверяем обновления Service Worker...');
+      registration.update();
+
+      // Проверяем, есть ли обновление Service Worker
+      registration.addEventListener('updatefound', () => {
+        console.log('Обнаружено обновление Service Worker');
+        const newWorker = registration.installing;
+        newWorker.addEventListener('statechange', () => {
+          console.log('Состояние нового Service Worker:', newWorker.state);
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            console.log('Новая версия Service Worker установлена, показываем уведомление');
+            const updateMessage = document.createElement('div');
+            updateMessage.style.position = 'fixed';
+            updateMessage.style.bottom = '20px';
+            updateMessage.style.left = '50%';
+            updateMessage.style.transform = 'translateX(-50%)';
+            updateMessage.style.backgroundColor = '#4CAF50';
+            updateMessage.style.color = 'white';
+            updateMessage.style.padding = '10px 20px';
+            updateMessage.style.borderRadius = '5px';
+            updateMessage.style.zIndex = '1000';
+            updateMessage.innerHTML = `
+              Новая версия приложения доступна!
+              <button onclick="updateApp()">Обновить</button>
+            `;
+            document.body.appendChild(updateMessage);
+
+            window.updateApp = () => {
+              console.log('Пользователь нажал "Обновить", отправляем SKIP_WAITING');
+              newWorker.postMessage({ type: 'SKIP_WAITING' });
+              window.location.reload();
+            };
+          }
         });
-
-        // Принудительно проверяем обновления
-        console.log('Проверяем обновления Service Worker...');
-        registration.update();
-      })
-      .catch(error => {
-        console.error('Ошибка регистрации Service Worker:', error);
       });
 
-    // Проверяем обновления каждые 5 минут
-    setInterval(() => {
-      console.log('Периодическая проверка обновлений Service Worker...');
-      navigator.serviceWorker.getRegistration().then(registration => {
-        if (registration) {
-          registration.update();
-        } else {
-          console.log('Service Worker не зарегистрирован, пропускаем проверку обновлений');
-        }
-      });
-    }, 5 * 60 * 1000);
+      // Проверяем обновления каждые 2 минуты (уменьшим интервал для тестов)
+      setInterval(() => {
+        console.log('Периодическая проверка обновлений Service Worker...');
+        navigator.serviceWorker.getRegistration().then(reg => {
+          if (reg) {
+            reg.update();
+          } else {
+            console.log('Service Worker не зарегистрирован, пропускаем проверку обновлений');
+          }
+        });
+      }, 2 * 60 * 1000);
+    })
+    .catch(error => {
+      console.error('Ошибка регистрации Service Worker:', error);
+    });
+
+  // Добавляем обработчик события controllerchange для перезагрузки страницы
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    console.log('Service Worker контроллер изменился, перезагружаем страницу');
+    window.location.reload();
   });
 }
 
