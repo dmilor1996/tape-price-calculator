@@ -1,15 +1,17 @@
 const CACHE_NAME = 'price-calculator-cache-v1';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/tape-calculator.html',
-  '/pouch-calculator.html',
-  '/styles.css',
-  '/tape-script.js',
-  '/pouch-script.js',
-  '/tape-icon.png',
-  '/pouch-icon.png',
-  '/manifest.json'
+  '/tape-price-calculator/',
+  '/tape-price-calculator/index.html',
+  '/tape-price-calculator/tape-calculator.html',
+  '/tape-price-calculator/pouch-calculator.html',
+  '/tape-price-calculator/styles.css',
+  '/tape-price-calculator/tape-script.js',
+  '/tape-price-calculator/pouch-script.js',
+  '/tape-price-calculator/tape-icon.png',
+  '/tape-price-calculator/pouch-icon.png',
+  '/tape-price-calculator/pwa-icon-192.png',
+  '/tape-price-calculator/pwa-icon-512.png',
+  '/tape-price-calculator/manifest.json'
 ];
 
 // Установка Service Worker и кэширование ресурсов
