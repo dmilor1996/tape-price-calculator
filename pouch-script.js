@@ -263,43 +263,47 @@ async function initializePouchPrices() {
 
 // Функция для загрузки цен из Firebase
 async function loadPouchPrices() {
-    if (!db) {
-        pouchPrices = defaultPouchPrices;
-        document.getElementById("result").innerText = "Firebase недоступен: используются цены по умолчанию.";
-        return;
-    }
-    try {
-        const snapshot = await db.collection("pouchPrices").get();
-        pouchPrices = {};
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            pouchPrices[data.material] = data.prices;
-        });
-        console.log("Цены успешно загружены из Firebase:", pouchPrices);
-    } catch (error) {
-        console.error("Ошибка при загрузке цен из Firebase:", error);
-        if (navigator.onLine) {
-            document.getElementById("result").innerText = "Ошибка: не удалось загрузить цены. Проверьте подключение к интернету.";
+  if (!db) {
+    console.log('Firebase недоступен, пытаемся загрузить цены из localStorage или использовать значения по умолчанию');
+    pouchPrices = defaultPouchPrices;
+    document.getElementById("result").innerText = "Firebase недоступен: используются цены по умолчанию.";
+    return;
+  }
+  try {
+    console.log('Загружаем цены из Firebase...');
+    const snapshot = await db.collection("pouchPrices").get();
+    pouchPrices = {};
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      pouchPrices[data.material] = data.prices;
+    });
+    console.log("Цены успешно загружены из Firebase:", pouchPrices);
+  } catch (error) {
+    console.error("Ошибка при загрузке цен из Firebase:", error);
+    if (navigator.onLine) {
+      document.getElementById("result").innerText = "Ошибка: не удалось загрузить цены. Проверьте подключение к интернету.";
+    } else {
+      document.getElementById("result").innerText = "Оффлайн: используются последние сохраненные цены.";
+      try {
+        const cachedPrices = localStorage.getItem("pouchPrices");
+        if (cachedPrices) {
+          pouchPrices = JSON.parse(cachedPrices);
+          console.log("Цены загружены из локального хранилища:", pouchPrices);
         } else {
-            document.getElementById("result").innerText = "Оффлайн: используются последние сохраненные цены.";
-            try {
-                const cachedPrices = localStorage.getItem("pouchPrices");
-                if (cachedPrices) {
-                    pouchPrices = JSON.parse(cachedPrices);
-                    console.log("Цены загружены из локального хранилища:", pouchPrices);
-                } else {
-                    pouchPrices = defaultPouchPrices;
-                    document.getElementById("result").innerText = "Оффлайн: используются цены по умолчанию.";
-                }
-            } catch (cacheError) {
-                console.error("Ошибка при загрузке цен из локального хранилища:", cacheError);
-                pouchPrices = defaultPouchPrices;
-                document.getElementById("result").innerText = "Оффлайн: используются цены по умолчанию.";
-            }
+          pouchPrices = defaultPouchPrices;
+          document.getElementById("result").innerText = "Оффлайн: используются цены по умолчанию.";
+          console.log("Цены из localStorage не найдены, используем defaultPouchPrices:", pouchPrices);
         }
+      } catch (cacheError) {
+        console.error("Ошибка при загрузке цен из локального хранилища:", cacheError);
+        pouchPrices = defaultPouchPrices;
+        document.getElementById("result").innerText = "Оффлайн: используются цены по умолчанию.";
+        console.log("Ошибка localStorage, используем defaultPouchPrices:", pouchPrices);
+      }
     }
-    // Сохраняем цены в локальное хранилище для оффлайн-режима
-    localStorage.setItem("pouchPrices", JSON.stringify(pouchPrices));
+  }
+  // Сохраняем цены в локальное хранилище для оффлайн-режима
+  localStorage.setItem("pouchPrices", JSON.stringify(pouchPrices));
 }
 
 // Функция для открытия редактора цен
