@@ -1,16 +1,19 @@
 // Регистрация Service Worker с проверкой обновлений
 if ('serviceWorker' in navigator) {
+  console.log('Service Worker поддерживается, начинаем регистрацию...');
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/tape-price-calculator/sw.js')
       .then(registration => {
-        console.log('Service Worker зарегистрирован:', registration);
+        console.log('Service Worker успешно зарегистрирован:', registration);
 
         // Проверяем, есть ли обновление Service Worker
         registration.addEventListener('updatefound', () => {
+          console.log('Обнаружено обновление Service Worker');
           const newWorker = registration.installing;
           newWorker.addEventListener('statechange', () => {
+            console.log('Состояние нового Service Worker:', newWorker.state);
             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              // Создаём кастомное уведомление
+              console.log('Новая версия Service Worker установлена, показываем уведомление');
               const updateMessage = document.createElement('div');
               updateMessage.style.position = 'fixed';
               updateMessage.style.bottom = '20px';
@@ -28,21 +31,31 @@ if ('serviceWorker' in navigator) {
               document.body.appendChild(updateMessage);
 
               window.updateApp = () => {
+                console.log('Пользователь нажал "Обновить", отправляем SKIP_WAITING');
                 newWorker.postMessage({ type: 'SKIP_WAITING' });
                 window.location.reload();
               };
             }
           });
         });
+
+        // Принудительно проверяем обновления
+        console.log('Проверяем обновления Service Worker...');
+        registration.update();
       })
       .catch(error => {
-        console.log('Ошибка регистрации Service Worker:', error);
+        console.error('Ошибка регистрации Service Worker:', error);
       });
 
     // Проверяем обновления каждые 5 минут
     setInterval(() => {
+      console.log('Периодическая проверка обновлений Service Worker...');
       navigator.serviceWorker.getRegistration().then(registration => {
-        registration.update();
+        if (registration) {
+          registration.update();
+        } else {
+          console.log('Service Worker не зарегистрирован, пропускаем проверку обновлений');
+        }
       });
     }, 5 * 60 * 1000);
   });
