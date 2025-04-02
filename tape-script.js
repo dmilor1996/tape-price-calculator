@@ -1,3 +1,53 @@
+// Регистрация Service Worker с проверкой обновлений
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/tape-price-calculator/sw.js')
+      .then(registration => {
+        console.log('Service Worker зарегистрирован:', registration);
+
+        // Проверяем, есть ли обновление Service Worker
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              // Создаём кастомное уведомление
+              const updateMessage = document.createElement('div');
+              updateMessage.style.position = 'fixed';
+              updateMessage.style.bottom = '20px';
+              updateMessage.style.left = '50%';
+              updateMessage.style.transform = 'translateX(-50%)';
+              updateMessage.style.backgroundColor = '#4CAF50';
+              updateMessage.style.color = 'white';
+              updateMessage.style.padding = '10px 20px';
+              updateMessage.style.borderRadius = '5px';
+              updateMessage.style.zIndex = '1000';
+              updateMessage.innerHTML = `
+                Новая версия приложения доступна!
+                <button onclick="updateApp()">Обновить</button>
+              `;
+              document.body.appendChild(updateMessage);
+
+              window.updateApp = () => {
+                newWorker.postMessage({ type: 'SKIP_WAITING' });
+                window.location.reload();
+              };
+            }
+          });
+        });
+      })
+      .catch(error => {
+        console.log('Ошибка регистрации Service Worker:', error);
+      });
+
+    // Проверяем обновления каждые 5 минут
+    setInterval(() => {
+      navigator.serviceWorker.getRegistration().then(registration => {
+        registration.update();
+      });
+    }, 5 * 60 * 1000);
+  });
+}
+
 // Глобальная переменная для хранения цен
 let prices = {};
 
