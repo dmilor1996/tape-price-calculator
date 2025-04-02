@@ -30,38 +30,68 @@
 
     <!-- Регистрация Service Worker -->
 <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then(registration => {
-          console.log('Service Worker зарегистрирован:', registration);
+ // Регистрация Service Worker с проверкой обновлений
+if ('serviceWorker' in navigator) {
+  console.log('Service Worker поддерживается, начинаем регистрацию...');
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/tape-price-calculator/sw.js')
+      .then(registration => {
+        console.log('Service Worker успешно зарегистрирован:', registration);
 
-          // Проверяем, есть ли обновление Service Worker
-          registration.addEventListener('updatefound', () => {
-            const newWorker = registration.installing;
-            newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                // Новая версия Service Worker установлена, но ждёт активации
-                if (confirm('Доступна новая версия приложения. Обновить сейчас?')) {
-                  newWorker.postMessage({ type: 'SKIP_WAITING' });
-                  window.location.reload();
-                }
-              }
-            });
+        // Проверяем, есть ли обновление Service Worker
+        registration.addEventListener('updatefound', () => {
+          console.log('Обнаружено обновление Service Worker');
+          const newWorker = registration.installing;
+          newWorker.addEventListener('statechange', () => {
+            console.log('Состояние нового Service Worker:', newWorker.state);
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              console.log('Новая версия Service Worker установлена, показываем уведомление');
+              const updateMessage = document.createElement('div');
+              updateMessage.style.position = 'fixed';
+              updateMessage.style.bottom = '20px';
+              updateMessage.style.left = '50%';
+              updateMessage.style.transform = 'translateX(-50%)';
+              updateMessage.style.backgroundColor = '#4CAF50';
+              updateMessage.style.color = 'white';
+              updateMessage.style.padding = '10px 20px';
+              updateMessage.style.borderRadius = '5px';
+              updateMessage.style.zIndex = '1000';
+              updateMessage.innerHTML = `
+                Новая версия приложения доступна!
+                <button onclick="updateApp()">Обновить</button>
+              `;
+              document.body.appendChild(updateMessage);
+
+              window.updateApp = () => {
+                console.log('Пользователь нажал "Обновить", отправляем SKIP_WAITING');
+                newWorker.postMessage({ type: 'SKIP_WAITING' });
+                window.location.reload();
+              };
+            }
           });
-        })
-        .catch(error => {
-          console.log('Ошибка регистрации Service Worker:', error);
         });
 
-      // Проверяем обновления каждые 5 минут
-      setInterval(() => {
-        navigator.serviceWorker.getRegistration().then(registration => {
+        // Принудительно проверяем обновления
+        console.log('Проверяем обновления Service Worker...');
+        registration.update();
+      })
+      .catch(error => {
+        console.error('Ошибка регистрации Service Worker:', error);
+      });
+
+    // Проверяем обновления каждые 5 минут
+    setInterval(() => {
+      console.log('Периодическая проверка обновлений Service Worker...');
+      navigator.serviceWorker.getRegistration().then(registration => {
+        if (registration) {
           registration.update();
-        });
-      }, 5 * 60 * 1000);
-    });
-  }
+        } else {
+          console.log('Service Worker не зарегистрирован, пропускаем проверку обновлений');
+        }
+      });
+    }, 5 * 60 * 1000);
+  });
+}
 </script>
 </body>
 </html>
