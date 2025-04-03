@@ -1,4 +1,5 @@
 const CACHE_NAME = 'price-calculator-cache-v4';
+const APP_VERSION = '1.0.4'; // Добавляем версию приложения, меняем при каждом деплое
 const urlsToCache = [
   '/tape-price-calculator/',
   '/tape-price-calculator/index.html',
@@ -16,7 +17,7 @@ const urlsToCache = [
 
 // Установка Service Worker и кэширование ресурсов
 self.addEventListener('install', event => {
-  console.log('Установка Service Worker, кэширование ресурсов...');
+  console.log('Установка Service Worker, версия:', APP_VERSION);
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
@@ -25,14 +26,14 @@ self.addEventListener('install', event => {
       })
       .then(() => {
         console.log('Service Worker установлен, пропускаем ожидание');
-        self.skipWaiting();
+        return self.skipWaiting();
       })
   );
 });
 
 // Активация Service Worker и удаление старых кэшей
 self.addEventListener('activate', event => {
-  console.log('Активация Service Worker...');
+  console.log('Активация Service Worker, версия:', APP_VERSION);
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
     caches.keys().then(cacheNames => {
@@ -47,12 +48,12 @@ self.addEventListener('activate', event => {
     })
     .then(() => {
       console.log('Service Worker активирован, захватываем клиентов');
-      self.clients.claim();
+      return self.clients.claim();
     })
   );
 });
 
-// Обработка запросов (стратегия "Stale-While-Revalidate")
+// Обработка запросов (стратегия "Network First" для всех ресурсов)
 self.addEventListener('fetch', event => {
   const isFirebaseRequest = event.request.url.includes('firestore.googleapis.com');
 
@@ -72,22 +73,23 @@ self.addEventListener('fetch', event => {
         })
     );
   } else {
-    console.log('Запрос к статическому ресурсу, используем Stale-While-Revalidate:', event.request.url);
+    console.log('Запрос к ресурсу, используем Network First:', event.request.url);
     event.respondWith(
-      caches.open(CACHE_NAME).then(cache => {
-        return cache.match(event.request).then(cachedResponse => {
-          const fetchPromise = fetch(event.request).then(networkResponse => {
-            console.log('Обновляем кэш для:', event.request.url);
+      fetch(event.request)
+        .then(networkResponse => {
+          // Обновляем кэш
+          return caches.open(CACHE_NAME).then(cache => {
             cache.put(event.request, networkResponse.clone());
             return networkResponse;
-          }).catch(() => {
-            console.log('Сеть недоступна, возвращаем кэшированный ответ для:', event.request.url);
-            return cachedResponse;
           });
-
-          return cachedResponse || fetchPromise;
-        });
-      })
+        })
+        .catch(() => {
+          // Если сеть недоступна, возвращаем кэшированный ответ
+          console.log('Сеть недоступна, возвращаем кэшированный ответ для:', event.request.url);
+          return caches.match(event.request).then(cachedResponse => {
+            return cachedResponse || new Response('Ресурс недоступен в оффлайн-режиме', { status: 503 });
+          });
+        })
     );
   }
 });
