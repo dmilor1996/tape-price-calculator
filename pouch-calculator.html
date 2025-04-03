@@ -5,27 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Калькулятор цен на мешочки</title>
     <link rel="stylesheet" href="/tape-price-calculator/styles.css">
-    <!-- Подключение Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Подключение Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <!-- Добавляем манифест PWA -->
     <link rel="manifest" href="/tape-price-calculator/manifest.json">
-    <!-- Добавляем мета-теги для iOS -->
-    <meta name="mobile-web-app-capable" content="yes"> <!-- Обновляем устаревший тег -->
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="/tape-price-calculator/pwa-icon-192.png">
-    <!-- Отключаем кэширование -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <!-- Отключаем interest-cohort для устранения предупреждения -->
     <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
 </head>
 <body>
     <div class="container">
-        <!-- Кнопка "Назад" -->
         <a href="/tape-price-calculator/index.html" class="back-button">
             <i class="fas fa-arrow-left"></i> Назад
         </a>
@@ -37,11 +30,29 @@
         <label style="--order: 2;"><i class="fas fa-stamp"></i> Тип брендирования:</label>
         <select id="brandingType" style="--order: 2;" onchange="updateSizeOptions()"></select><br><br>
 
-        <label style="--order: 3;"><i class="fas fa-ruler"></i> Размер (см):</label>
-        <select id="size" style="--order: 3;"></select><br><br>
+        <!-- Переключатель для выбора типа размера -->
+        <label style="--order: 3;"><i class="fas fa-ruler"></i> Тип размера:</label>
+        <select id="sizeType" style="--order: 3;" onchange="toggleSizeInput()">
+            <option value="predefined">Предопределённый размер</option>
+            <option value="custom">Произвольный размер</option>
+        </select><br><br>
 
-        <label style="--order: 4;"><i class="fas fa-boxes"></i> Количество (шт):</label>
-        <input type="number" id="quantity" style="--order: 4;" min="1" required><br><br>
+        <!-- Блок для предопределённых размеров -->
+        <div id="predefinedSizeBlock">
+            <label style="--order: 4;"><i class="fas fa-ruler"></i> Размер (см):</label>
+            <select id="size" style="--order: 4;"></select><br><br>
+        </div>
+
+        <!-- Блок для произвольных размеров -->
+        <div id="customSizeBlock" style="display: none;">
+            <label style="--order: 4;"><i class="fas fa-ruler-horizontal"></i> Ширина (см):</label>
+            <input type="number" id="customWidth" style="--order: 4;" min="1" step="0.1" required><br><br>
+            <label style="--order: 5;"><i class="fas fa-ruler-vertical"></i> Высота (см):</label>
+            <input type="number" id="customHeight" style="--order: 5;" min="1" step="0.1" required><br><br>
+        </div>
+
+        <label style="--order: 6;"><i class="fas fa-boxes"></i> Количество (шт):</label>
+        <input type="number" id="quantity" style="--order: 6;" min="1" required><br><br>
 
         <button type="button" class="calculate" onclick="calculatePouchPrice()">Рассчитать</button>
         <button type="button" class="edit-prices" onclick="openPriceEditor()">
@@ -69,7 +80,6 @@
             </div>
         </div>
 
-        <!-- Модальное окно для редактирования цен -->
         <div id="priceEditorModal" class="modal">
             <div id="priceEditorContent" class="modal-content">
                 <span class="close" onclick="closePriceEditor()">×</span>
@@ -80,8 +90,6 @@
             </div>
         </div>
     </div>
-    <!-- Подключение скрипта в конце body -->
     <script src="/tape-price-calculator/pouch-script.js"></script>
-    <!-- Регистрация Service Worker теперь только в pouch-script.js -->
 </body>
 </html>
