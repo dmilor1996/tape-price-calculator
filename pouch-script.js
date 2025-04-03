@@ -135,30 +135,30 @@ const defaultPouchPrices = {
     }
 };
 
-// Базовые цены за см² для произвольных размеров (откалиброваны по наименьшему размеру)
-const basePricePerCm2 = {
+// Базовые цены за см² и фиксированная стоимость
+const pricingParams = {
     "Хлопок": {
-        "Без брендирования, лента хлопок": 1.0625, // 85 / 80 для S 8x10, 50-199
-        "Брендирование штампом": 1.125, // 90 / 80 для S 8x10, 100-199
-        "Термоперенос": 1.1875, // 95 / 80 для S 8x10, 100-199
-        "С помощью ленты с печатью": 1.125 // 90 / 80 для S 8x10, 50-199
+        "Без брендирования, лента хлопок": { fixedCost: 70, pricePerCm2: 0.1875 },
+        "Брендирование штампом": { fixedCost: 75, pricePerCm2: 0.1875 },
+        "Термоперенос": { fixedCost: 80, pricePerCm2: 0.1875 },
+        "С помощью ленты с печатью": { fixedCost: 75, pricePerCm2: 0.1875 }
     },
     "Хлопок с двойной лентой": {
-        "Термоперенос": 1.9375, // 155 / 80 для S 8x10, 100-199
-        "Штамп": 1.8125 // 145 / 80 для S 8x10, 100-199
+        "Термоперенос": { fixedCost: 130, pricePerCm2: 0.3125 },
+        "Штамп": { fixedCost: 120, pricePerCm2: 0.3125 }
     },
     "Саржа с двойной лентой": {
-        "Термоперенос": 2.1875 // 175 / 80 для S 8x10, 100-199
+        "Термоперенос": { fixedCost: 150, pricePerCm2: 0.3125 }
     },
     "Фатин": {
-        "Лента с логотипом": 0.875 // 105 / 120 для S 8x15, 50-199
+        "Лента с логотипом": { fixedCost: 85, pricePerCm2: 0.1667 }
     },
     "Велюр": {
-        "Лента с логотипом": 1.4286, // 90 / 63 для S 7x9, 50-199
-        "Термоперенос": 1.8254 // 115 / 63 для S 7x9, 100-199
+        "Лента с логотипом": { fixedCost: 75, pricePerCm2: 0.2381 },
+        "Термоперенос": { fixedCost: 95, pricePerCm2: 0.3175 }
     },
     "Велюр с двойной лентой": {
-        "Термоперенос": 1.8125 // 145 / 80 для S 8x10, 100-199
+        "Термоперенос": { fixedCost: 120, pricePerCm2: 0.3125 }
     }
 };
 
@@ -481,22 +481,28 @@ function toggleSizeInput() {
 function calculateCustomPouchPrice(material, branding, width, height, quantity) {
     const area = width * height; // Площадь в см²
 
+    // Получаем параметры для материала и брендирования
+    const params = pricingParams[material]?.[branding] || { fixedCost: 70, pricePerCm2: 0.2 };
+    const fixedCost = params.fixedCost;
+    const pricePerCm2 = params.pricePerCm2;
+
+    // Базовая цена для диапазона 50-199 или 100-199
+    let basePricePerUnit = fixedCost + area * pricePerCm2;
+
     // Коэффициенты количества (откалиброваны по defaultPouchPrices)
     let quantityMultiplier;
     const minQty = minQuantity[branding] || 50;
     if (minQty === 50) {
-        if (quantity >= 500) quantityMultiplier = 0.8235; // ~70/85 для Хлопка без брендирования
-        else if (quantity >= 200) quantityMultiplier = 0.9412; // ~80/85
+        if (quantity >= 500) quantityMultiplier = 70 / 85; // 0.8235
+        else if (quantity >= 200) quantityMultiplier = 80 / 85; // 0.9412
         else quantityMultiplier = 1.0;
     } else {
-        if (quantity >= 500) quantityMultiplier = 0.8947; // ~85/95 для Термопереноса на Хлопке
-        else if (quantity >= 200) quantityMultiplier = 0.9474; // ~90/95
+        if (quantity >= 500) quantityMultiplier = 85 / 95; // 0.8947
+        else if (quantity >= 200) quantityMultiplier = 90 / 95; // 0.9474
         else quantityMultiplier = 1.0;
     }
 
-    const basePrice = basePricePerCm2[material]?.[branding] || 1.0; // Значение по умолчанию
-    const sizeCorrection = 1 / (1 + 0.05 * area / 100); // Корректировка по размеру
-    let pricePerUnit = area * basePrice * quantityMultiplier * sizeCorrection;
+    let pricePerUnit = basePricePerUnit * quantityMultiplier;
     pricePerUnit = Math.round(pricePerUnit); // Округляем до целого
 
     return pricePerUnit * quantity;
