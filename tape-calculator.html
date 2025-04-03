@@ -16,6 +16,12 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="/tape-price-calculator/pwa-icon-192.png">
+    <!-- Отключаем кэширование -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <!-- Отключаем interest-cohort для устранения предупреждения -->
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
 </head>
 <body>
     <div class="container">
@@ -77,15 +83,56 @@
     <script src="/tape-price-calculator/tape-script.js"></script>
     <!-- Регистрация Service Worker -->
     <script>
+        // Регистрация Service Worker с проверкой обновлений
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/tape-price-calculator/sw.js')
-                    .then(registration => {
-                        console.log('Service Worker зарегистрирован:', registration);
-                    })
-                    .catch(error => {
-                        console.error('Ошибка регистрации Service Worker:', error);
+            console.log('Service Worker поддерживается, начинаем регистрацию...');
+
+            // Добавляем параметр версии к пути sw.js, чтобы обойти кэширование
+            const swVersion = 'v5'; // Обновляем версию при каждом деплое
+            const swPath = `/tape-price-calculator/sw.js?version=${swVersion}`;
+
+            // Регистрируем Service Worker
+            navigator.serviceWorker.register(swPath)
+                .then(registration => {
+                    console.log('Service Worker успешно зарегистрирован:', registration);
+
+                    // Проверяем обновления сразу после регистрации
+                    console.log('Проверяем обновления Service Worker...');
+                    registration.update();
+
+                    // Проверяем, есть ли обновление Service Worker
+                    registration.addEventListener('updatefound', () => {
+                        console.log('Обнаружено обновление Service Worker');
+                        const newWorker = registration.installing;
+                        newWorker.addEventListener('statechange', () => {
+                            console.log('Состояние нового Service Worker:', newWorker.state);
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                console.log('Новая версия Service Worker установлена, отправляем SKIP_WAITING');
+                                newWorker.postMessage({ type: 'SKIP_WAITING' });
+                            }
+                        });
                     });
+
+                    // Проверяем обновления каждые 1 минуту
+                    setInterval(() => {
+                        console.log('Периодическая проверка обновлений Service Worker...');
+                        navigator.serviceWorker.getRegistration().then(reg => {
+                            if (reg) {
+                                reg.update();
+                            } else {
+                                console.log('Service Worker не зарегистрирован, пропускаем проверку обновлений');
+                            }
+                        });
+                    }, 1 * 60 * 1000);
+                })
+                .catch(error => {
+                    console.error('Ошибка регистрации Service Worker:', error);
+                });
+
+            // Автоматическая перезагрузка страницы при смене контроллера
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                console.log('Service Worker контроллер изменился, перезагружаем страницу');
+                window.location.reload();
             });
         }
     </script>
