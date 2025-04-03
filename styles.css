@@ -1,11 +1,7 @@
-/* Подключаем премиальные шрифты через Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@300;400;600&display=swap');
-
 /* Общие стили */
 body {
-    font-family: 'Raleway', sans-serif;
-    background: linear-gradient(135deg, #1A1A1A 0%, #2C2C2C 100%);
-    color: #E5E5E5;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
     margin: 0;
     padding: 0;
     display: flex;
@@ -17,85 +13,89 @@ body {
 /* Контейнеры */
 .container,
 .menu-container {
-    background: #121212;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
-    border: 1px solid rgba(255, 215, 0, 0.3);
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     text-align: center;
-    transition: transform 0.3s ease;
 }
 
 .container {
-    width: 350px;
+    width: 300px;
     position: relative;
-    padding-top: 70px;
+    padding-top: 60px; /* Отступ сверху для кнопки "Назад" в десктопной версии */
 }
 
 .menu-container {
-    width: 500px;
-}
-
-.container:hover,
-.menu-container:hover {
-    transform: translateY(-5px);
+    width: 450px;
 }
 
 /* Заголовки */
 h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 28px;
-    color: #FFD700;
-    margin-bottom: 25px;
-    animation: fadeInFromTop 0.8s ease-out;
+    font-size: 24px;
+    margin-bottom: 20px;
+    animation: slideInFromTop 0.5s ease-out;
 }
 
 h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    color: #FFD700;
     margin: 20px 0 10px;
+    color: #333;
+    font-weight: bold;
+    font-size: 18px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+#priceEditorContent h3 {
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+#priceEditorContent h4 {
+    font-size: 14px;
+    color: #555;
+    margin: 8px 0;
+}
+
+#priceEditorContent h5 {
+    font-size: 12px;
+    color: #777;
+    margin: 3px 0;
 }
 
 /* Кнопки */
 button,
 .calculator-button,
 .back-button {
-    color: #121212;
-    background: #FFD700;
+    color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 5px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 button {
-    padding: 12px 24px;
+    padding: 10px 20px;
 }
 
 button.calculate {
-    background: #FFD700;
+    background-color: #4CAF50;
 }
 
 button.edit-prices {
-    background: #DAA520;
+    background-color: #ff9800;
     margin-left: 10px;
 }
 
 button.show-history {
-    background: #FFD700;
-    padding: 6px 12px;
+    background-color: #007BFF;
+    padding: 5px 10px;
     font-size: 14px;
 }
 
 button:hover {
-    background: #E5C100;
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
-    transform: translateY(-2px);
+    animation: pulse 0.5s infinite;
 }
 
 button:active {
@@ -110,67 +110,82 @@ button:active {
     display: flex;
     align-items: center;
     padding: 8px 15px;
+    background-color: #007BFF;
     text-decoration: none;
     font-size: 16px;
-    font-weight: 600;
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.back-button i {
+    margin-right: 8px;
 }
 
 .back-button:hover {
-    background: #E5C100;
-    transform: translateY(-2px);
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.back-button:active {
+    transform: scale(0.95);
 }
 
 /* Кнопки выбора калькулятора */
+.calculator-selection {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
 .calculator-button {
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: #4CAF50;
     padding: 20px;
     text-decoration: none;
     font-size: 18px;
-    width: 220px;
+    width: 200px;
     position: relative;
 }
 
+.calculator-button i {
+    margin-right: 10px;
+}
+
 .calculator-button:hover {
-    background: #E5C100;
+    background-color: #45a049;
 }
 
 /* Поля ввода и метки */
 label {
     display: block;
     margin-bottom: 5px;
-    font-weight: 600;
-    color: #FFD700;
+    font-weight: bold;
     animation: fadeInFromLeft 0.5s ease-out;
     animation-delay: calc(0.1s * var(--order));
+}
+
+label i {
+    margin-right: 5px;
+    color: #007BFF;
 }
 
 select,
 input {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid rgba(255, 215, 0, 0.3);
-    border-radius: 6px;
-    background: #2A2A2A;
-    color: #E5E5E5;
-    font-family: 'Raleway', sans-serif;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    background: url('data:image/svg+xml;utf8,<svg fill="#FFD700" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 8px center;
+    background: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 8px center;
     background-size: 16px;
     animation: fadeInFromRight 0.5s ease-out;
     animation-delay: calc(0.1s * var(--order));
-}
-
-select:focus,
-input:focus {
-    border-color: #FFD700;
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-    outline: none;
 }
 
 /* История расчетов */
@@ -204,35 +219,44 @@ input:focus {
 
 #history li {
     font-size: 14px;
-    color: #E5E5E5;
+    color: #555;
     padding: 5px 0;
-    border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+    border-bottom: 1px solid #eee;
     cursor: pointer;
     animation: slideInFromLeft 0.5s ease-out;
     animation-delay: calc(0.05s * var(--index));
 }
 
 #history li:hover {
-    background: rgba(255, 215, 0, 0.1);
+    background-color: #f0f0f0;
 }
 
 /* Кнопки в истории */
 #toggleHistoryButton,
 #copyButton,
 #savePricesButton {
-    background: #FFD700;
-    color: #121212;
-    padding: 6px 12px;
+    background-color: #007BFF;
+    padding: 5px 10px;
     font-size: 14px;
+}
+
+#toggleHistoryButton:hover,
+#copyButton:hover,
+#savePricesButton:hover {
+    background-color: #0056b3;
 }
 
 #clearHistoryButton,
 #closeEditorButton {
-    background: #DAA520;
-    color: #121212;
-    padding: 6px 12px;
+    background-color: #dc3545;
+    padding: 5px 10px;
     font-size: 14px;
     margin-top: 10px;
+}
+
+#clearHistoryButton:hover,
+#closeEditorButton:hover {
+    background-color: #c82333;
 }
 
 /* Детали расчета */
@@ -243,14 +267,20 @@ input:focus {
 
 .calculation-details p {
     font-size: 14px;
-    color: #E5E5E5;
+    color: #555;
     margin: 0 0 10px 0;
     white-space: pre-wrap;
 }
 
 .total-price {
     font-weight: bold;
-    color: #FFD700;
+    color: #333;
+}
+
+#copyButton.copied {
+    background-color: #28a745;
+    animation: flash 0.5s ease;
+    transform: scale(1.1);
 }
 
 /* Модальное окно редактора цен */
@@ -263,17 +293,16 @@ input:focus {
     width: 100%;
     height: 100%;
     overflow: auto;
-    background: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.4);
     animation: fadeIn 0.5s ease-in;
 }
 
 .modal-content {
-    background: #1A1A1A;
+    background-color: white;
     margin: 10% auto;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
-    border: 1px solid rgba(255, 215, 0, 0.3);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 90%;
     max-width: 500px;
     text-align: left;
@@ -281,7 +310,7 @@ input:focus {
 }
 
 .close {
-    color: #FFD700;
+    color: #aaa;
     float: right;
     font-size: 24px;
     font-weight: bold;
@@ -291,11 +320,79 @@ input:focus {
 
 .close:hover,
 .close:focus {
-    color: #E5C100;
+    color: #333;
+}
+
+#priceEditorInputs {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    padding-right: 5px;
+}
+
+#priceEditorInputs div {
+    margin-bottom: 3px;
+}
+
+#priceEditorInputs label {
+    display: inline-block;
+    width: 100px;
+    margin-right: 5px;
+    font-weight: normal;
+    color: #555;
+    font-size: 12px;
+    animation: none;
+}
+
+#priceEditorInputs input {
+    width: 50px;
+    padding: 3px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: none;
+    font-size: 12px;
+    animation: none;
+}
+
+#priceEditorInputs input:focus {
+    border-color: #007BFF;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+/* Анимации иконок */
+.tape-animation,
+.pouch-animation {
+    position: absolute;
+    top: 50%;
+    opacity: 0;
+    width: 60px;
+    height: 60px;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.tape-animation {
+    left: 0;
+    transform: translateX(0) rotate(0deg);
+}
+
+.pouch-animation {
+    right: 0;
+    transform: translateX(0) rotate(0deg);
+}
+
+.tape-button:hover .tape-animation {
+    transform: translateX(-70px) rotate(360deg);
+    opacity: 1;
+}
+
+.pouch-button:hover .pouch-animation {
+    transform: translateX(70px) rotate(360deg);
+    opacity: 1;
 }
 
 /* Анимации */
-@keyframes fadeInFromTop {
+@keyframes slideInFromTop {
     from { opacity: 0; transform: translateY(-20px); }
     to { opacity: 1; transform: translateY(0); }
 }
@@ -310,6 +407,18 @@ input:focus {
     to { opacity: 1; transform: translateX(0); }
 }
 
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+}
+
+@keyframes flash {
+    0% { background-color: #007BFF; }
+    50% { background-color: #28a745; transform: scale(1.2); }
+    100% { background-color: #28a745; transform: scale(1.1); }
+}
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -320,13 +429,26 @@ input:focus {
     to { opacity: 1; transform: translateX(0); }
 }
 
+/* Стили для результата */
+#result {
+    font-size: 18px;
+    color: #333;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+/* Анимация для результатов и деталей расчета */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
 /* Стили для мобильных устройств */
 @media (max-width: 600px) {
     .container,
     .menu-container {
         width: 90%;
-        padding: 20px;
-        padding-top: 60px;
+        padding: 15px;
+        padding-top: 50px; /* Увеличиваем padding-top, чтобы вместить кнопку "Назад" */
     }
 
     .calculator-button {
@@ -336,13 +458,61 @@ input:focus {
     }
 
     .back-button {
-        top: 15px;
-        left: 15px;
+        top: 10px;
+        left: 10px;
         padding: 6px 12px;
         font-size: 14px;
     }
 
     h1 {
-        font-size: 24px;
+        font-size: 20px;
     }
+
+    h3 {
+        font-size: 16px;
+    }
+
+    button {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+
+    select,
+    input {
+        padding: 6px;
+        font-size: 14px;
+    }
+
+    .modal-content {
+        width: 95%;
+        margin: 20% auto;
+        padding: 10px;
+    }
+
+    #priceEditorInputs {
+        max-height: 200px;
+    }
+}
+
+/* Стили для скроллбара в модальном окне и истории */
+#priceEditorInputs::-webkit-scrollbar,
+#history ul::-webkit-scrollbar {
+    width: 8px;
+}
+
+#priceEditorInputs::-webkit-scrollbar-track,
+#history ul::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+#priceEditorInputs::-webkit-scrollbar-thumb,
+#history ul::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+#priceEditorInputs::-webkit-scrollbar-thumb:hover,
+#history ul::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
