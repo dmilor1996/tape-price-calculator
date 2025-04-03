@@ -1,5 +1,5 @@
-const CACHE_NAME = 'price-calculator-cache-v4';
-const APP_VERSION = '1.0.4'; // Добавляем версию приложения, меняем при каждом деплое
+const CACHE_NAME = 'price-calculator-cache-v5';
+const APP_VERSION = '1.0.5'; // Добавляем версию приложения, меняем при каждом деплое
 const urlsToCache = [
   '/tape-price-calculator/',
   '/tape-price-calculator/index.html',
