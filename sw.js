@@ -1,5 +1,5 @@
-const CACHE_NAME = 'price-calculator-cache-v5';
-const APP_VERSION = '1.0.5'; // Добавляем версию приложения, меняем при каждом деплое
+const CACHE_NAME = 'price-calculator-cache-v5'; // Обновляем CACHE_NAME
+const APP_VERSION = '1.0.5'; // Обновляем версию приложения
 const urlsToCache = [
   '/tape-price-calculator/',
   '/tape-price-calculator/index.html',
@@ -75,7 +75,7 @@ self.addEventListener('fetch', event => {
   } else {
     console.log('Запрос к ресурсу, используем Network First:', event.request.url);
     event.respondWith(
-      fetch(event.request)
+      fetch(event.request, { cache: 'no-store' }) // Отключаем кэширование на уровне fetch
         .then(networkResponse => {
           // Обновляем кэш
           return caches.open(CACHE_NAME).then(cache => {
