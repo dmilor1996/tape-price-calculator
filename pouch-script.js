@@ -135,33 +135,6 @@ const defaultPouchPrices = {
     }
 };
 
-// Базовые цены за см² и фиксированная стоимость
-const pricingParams = {
-    "Хлопок": {
-        "Без брендирования, лента хлопок": { fixedCost: 70, pricePerCm2: 0.1875 },
-        "Брендирование штампом": { fixedCost: 75, pricePerCm2: 0.1875 },
-        "Термоперенос": { fixedCost: 80, pricePerCm2: 0.1875 },
-        "С помощью ленты с печатью": { fixedCost: 75, pricePerCm2: 0.1875 }
-    },
-    "Хлопок с двойной лентой": {
-        "Термоперенос": { fixedCost: 130, pricePerCm2: 0.3125 },
-        "Штамп": { fixedCost: 120, pricePerCm2: 0.3125 }
-    },
-    "Саржа с двойной лентой": {
-        "Термоперенос": { fixedCost: 150, pricePerCm2: 0.3125 }
-    },
-    "Фатин": {
-        "Лента с логотипом": { fixedCost: 85, pricePerCm2: 0.1667 }
-    },
-    "Велюр": {
-        "Лента с логотипом": { fixedCost: 75, pricePerCm2: 0.2381 },
-        "Термоперенос": { fixedCost: 95, pricePerCm2: 0.3175 }
-    },
-    "Велюр с двойной лентой": {
-        "Термоперенос": { fixedCost: 120, pricePerCm2: 0.3125 }
-    }
-};
-
 // Доступные типы лент, брендирования и размеры
 const availablePouchTypes = [
     "Хлопок",
@@ -477,35 +450,61 @@ function toggleSizeInput() {
     document.getElementById("customSizeBlock").style.display = sizeType === "custom" ? "block" : "none";
 }
 
-// Функция для расчета цены произвольного размера
+// Функция для получения площади из строки размера (например, "S 8x10" → 80)
+function getAreaFromSize(size) {
+    const [width, height] = size.split(' ')[1].split('x').map(Number);
+    return width * height;
+}
+
+// Функция для расчета цены произвольного размера с интерполяцией
 function calculateCustomPouchPrice(material, branding, width, height, quantity) {
     const area = width * height; // Площадь в см²
 
-    // Получаем параметры для материала и брендирования
-    const params = pricingParams[material]?.[branding] || { fixedCost: 70, pricePerCm2: 0.2 };
-    const fixedCost = params.fixedCost;
-    const pricePerCm2 = params.pricePerCm2;
-
-    // Базовая цена для диапазона 50-199 или 100-199
-    let basePricePerUnit = fixedCost + area * pricePerCm2;
-
-    // Коэффициенты количества (откалиброваны по defaultPouchPrices)
-    let quantityMultiplier;
+    // Определяем диапазон количества
     const minQty = minQuantity[branding] || 50;
-    if (minQty === 50) {
-        if (quantity >= 500) quantityMultiplier = 70 / 85; // 0.8235
-        else if (quantity >= 200) quantityMultiplier = 80 / 85; // 0.9412
-        else quantityMultiplier = 1.0;
-    } else {
-        if (quantity >= 500) quantityMultiplier = 85 / 95; // 0.8947
-        else if (quantity >= 200) quantityMultiplier = 90 / 95; // 0.9474
-        else quantityMultiplier = 1.0;
+    const quantityCategory = minQty === 50 ?
+        (quantity >= 500 ? "500+" : quantity >= 200 ? "200-499" : "50-199") :
+        (quantity >= 500 ? "500+" : quantity >= 200 ? "200-499" : "100-199");
+
+    // Собираем данные о предопределённых размерах
+    const sizes = availableSizes[material]?.[branding] || [];
+    const prices = pouchPrices[material]?.[branding] || {};
+    const sizeData = sizes.map(size => ({
+        size,
+        area: getAreaFromSize(size),
+        price: prices[size]?.[quantityCategory] || 0
+    })).filter(data => data.price > 0);
+
+    if (sizeData.length === 0) return 0; // Нет данных для расчёта
+
+    // Если площадь совпадает с предопределённым размером
+    const exactMatch = sizeData.find(data => Math.abs(data.area - area) < 0.1); // Точность до 0.1 см²
+    if (exactMatch) return exactMatch.price * quantity;
+
+    // Сортируем по площади
+    sizeData.sort((a, b) => a.area - b.area);
+
+    // Находим ближайшие размеры (меньший и больший)
+    let lower = null, upper = null;
+    for (const data of sizeData) {
+        if (data.area < area) lower = data;
+        else if (data.area > area && !upper) upper = data;
     }
 
-    let pricePerUnit = basePricePerUnit * quantityMultiplier;
-    pricePerUnit = Math.round(pricePerUnit); // Округляем до целого
+    // Если площадь меньше минимального или больше максимального
+    if (!lower && upper) {
+        const pricePerCm2 = upper.price / upper.area;
+        return Math.round(area * pricePerCm2) * quantity;
+    }
+    if (!upper && lower) {
+        const pricePerCm2 = lower.price / lower.area;
+        return Math.round(area * pricePerCm2) * quantity;
+    }
+    if (!lower && !upper) return 0;
 
-    return pricePerUnit * quantity;
+    // Линейная интерполяция
+    const pricePerUnit = lower.price + (upper.price - lower.price) * (area - lower.area) / (upper.area - lower.area);
+    return Math.round(pricePerUnit * quantity);
 }
 
 // Функция для загрузки истории расчетов из Firestore
