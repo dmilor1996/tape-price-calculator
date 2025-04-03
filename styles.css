@@ -23,7 +23,7 @@ body {
 .container {
     width: 300px;
     position: relative;
-    padding-top: 60px;
+    padding-top: 60px; /* Отступ сверху для кнопки "Назад" в десктопной версии */
 }
 
 .menu-container {
@@ -448,6 +448,7 @@ input {
     .menu-container {
         width: 90%;
         padding: 15px;
+        padding-top: 50px; /* Увеличиваем padding-top, чтобы вместить кнопку "Назад" */
     }
 
     .calculator-button {
