@@ -34,7 +34,10 @@
 if ('serviceWorker' in navigator) {
   console.log('Service Worker поддерживается, начинаем регистрацию...');
 
-  // Регистрируем Service Worker сразу, без ожидания события 'load'
+  // Флаг для предотвращения повторного показа уведомления
+  let isUpdateNotified = false;
+
+  // Регистрируем Service Worker
   navigator.serviceWorker.register('/tape-price-calculator/sw.js')
     .then(registration => {
       console.log('Service Worker успешно зарегистрирован:', registration);
@@ -49,9 +52,12 @@ if ('serviceWorker' in navigator) {
         const newWorker = registration.installing;
         newWorker.addEventListener('statechange', () => {
           console.log('Состояние нового Service Worker:', newWorker.state);
-          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller && !isUpdateNotified) {
             console.log('Новая версия Service Worker установлена, показываем уведомление');
+            isUpdateNotified = true; // Устанавливаем флаг
+
             const updateMessage = document.createElement('div');
+            updateMessage.id = 'update-message'; // Добавляем ID для управления
             updateMessage.style.position = 'fixed';
             updateMessage.style.bottom = '20px';
             updateMessage.style.left = '50%';
@@ -70,13 +76,12 @@ if ('serviceWorker' in navigator) {
             window.updateApp = () => {
               console.log('Пользователь нажал "Обновить", отправляем SKIP_WAITING');
               newWorker.postMessage({ type: 'SKIP_WAITING' });
-              window.location.reload();
             };
           }
         });
       });
 
-      // Проверяем обновления каждые 2 минуты (уменьшим интервал для тестов)
+      // Проверяем обновления каждые 2 минуты
       setInterval(() => {
         console.log('Периодическая проверка обновлений Service Worker...');
         navigator.serviceWorker.getRegistration().then(reg => {
@@ -92,9 +97,14 @@ if ('serviceWorker' in navigator) {
       console.error('Ошибка регистрации Service Worker:', error);
     });
 
-  // Добавляем обработчик события controllerchange для перезагрузки страницы
+  // Автоматическая перезагрузка страницы при смене контроллера
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     console.log('Service Worker контроллер изменился, перезагружаем страницу');
+    // Удаляем уведомление перед перезагрузкой
+    const updateMessage = document.getElementById('update-message');
+    if (updateMessage) {
+      updateMessage.remove();
+    }
     window.location.reload();
   });
 }
