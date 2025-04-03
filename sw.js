@@ -1,5 +1,5 @@
-const CACHE_NAME = 'price-calculator-cache-v5';
-const APP_VERSION = '1.0.5';
+const CACHE_NAME = 'price-calculator-cache-v6';
+const APP_VERSION = '1.0.6';
 const urlsToCache = [
     '/tape-price-calculator/',
     '/tape-price-calculator/index.html',
