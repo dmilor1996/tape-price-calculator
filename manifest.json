@@ -6,7 +6,7 @@
     "display": "standalone",
     "background_color": "#f4f4f4",
     "theme_color": "#4CAF50",
-    "version": "1.0.6", // Обновляем версию
+    "version": "1.0.7", // Обновляем версию
     "icons": [
         {
             "src": "/tape-price-calculator/pwa-icon-192.png",
