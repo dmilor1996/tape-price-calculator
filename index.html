@@ -9,7 +9,7 @@
     <!-- Добавляем манифест PWA -->
     <link rel="manifest" href="/tape-price-calculator/manifest.json">
     <!-- Добавляем мета-теги для iOS -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes"> <!-- Обновляем устаревший тег -->
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="/tape-price-calculator/pwa-icon-192.png">
     <!-- Отключаем кэширование -->
@@ -40,8 +40,11 @@
         if ('serviceWorker' in navigator) {
             console.log('Service Worker поддерживается, начинаем регистрацию...');
 
+            // Флаг для предотвращения множественных перезагрузок
+            let isReloading = false;
+
             // Добавляем параметр версии к пути sw.js, чтобы обойти кэширование
-            const swVersion = 'v5'; // Обновляем версию при каждом деплое
+            const swVersion = 'v6'; // Обновляем версию
             const swPath = `/tape-price-calculator/sw.js?version=${swVersion}`;
 
             // Регистрируем Service Worker
@@ -82,10 +85,13 @@
                     console.error('Ошибка регистрации Service Worker:', error);
                 });
 
-            // Автоматическая перезагрузка страницы при смене контроллера
+            // Автоматическая перезагрузка страницы при смене контроллера (только один раз)
             navigator.serviceWorker.addEventListener('controllerchange', () => {
-                console.log('Service Worker контроллер изменился, перезагружаем страницу');
-                window.location.reload();
+                if (!isReloading) {
+                    isReloading = true;
+                    console.log('Service Worker контроллер изменился, перезагружаем страницу');
+                    window.location.reload();
+                }
             });
         }
     </script>
