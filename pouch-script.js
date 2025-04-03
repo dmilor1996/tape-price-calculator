@@ -135,6 +135,33 @@ const defaultPouchPrices = {
     }
 };
 
+// Базовые цены за см² для произвольных размеров
+const basePricePerCm2 = {
+    "Хлопок": {
+        "Без брендирования, лента хлопок": 0.6,
+        "Брендирование штампом": 0.65,
+        "Термоперенос": 0.7,
+        "С помощью ленты с печатью": 0.68
+    },
+    "Хлопок с двойной лентой": {
+        "Термоперенос": 0.9,
+        "Штамп": 0.85
+    },
+    "Саржа с двойной лентой": {
+        "Термоперенос": 1.0
+    },
+    "Фатин": {
+        "Лента с логотипом": 0.65
+    },
+    "Велюр": {
+        "Лента с логотипом": 0.75,
+        "Термоперенос": 0.8
+    },
+    "Велюр с двойной лентой": {
+        "Термоперенос": 1.2
+    }
+};
+
 // Доступные типы лент, брендирования и размеры
 const availablePouchTypes = [
     "Хлопок",
@@ -259,47 +286,47 @@ async function initializePouchPrices() {
 
 // Функция для загрузки цен из Firebase
 async function loadPouchPrices() {
-  if (!db) {
-    console.log('Firebase недоступен, пытаемся загрузить цены из localStorage или использовать значения по умолчанию');
-    pouchPrices = defaultPouchPrices;
-    document.getElementById("result").innerText = "Firebase недоступен: используются цены по умолчанию.";
-    return;
-  }
-  try {
-    console.log('Загружаем цены из Firebase...');
-    const snapshot = await db.collection("pouchPrices").get();
-    pouchPrices = {};
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      pouchPrices[data.material] = data.prices;
-    });
-    console.log("Цены успешно загружены из Firebase:", pouchPrices);
-  } catch (error) {
-    console.error("Ошибка при загрузке цен из Firebase:", error);
-    if (navigator.onLine) {
-      document.getElementById("result").innerText = "Ошибка: не удалось загрузить цены. Проверьте подключение к интернету.";
-    } else {
-      document.getElementById("result").innerText = "Оффлайн: используются последние сохраненные цены.";
-      try {
-        const cachedPrices = localStorage.getItem("pouchPrices");
-        if (cachedPrices) {
-          pouchPrices = JSON.parse(cachedPrices);
-          console.log("Цены загружены из локального хранилища:", pouchPrices);
-        } else {
-          pouchPrices = defaultPouchPrices;
-          document.getElementById("result").innerText = "Оффлайн: используются цены по умолчанию.";
-          console.log("Цены из localStorage не найдены, используем defaultPouchPrices:", pouchPrices);
-        }
-      } catch (cacheError) {
-        console.error("Ошибка при загрузке цен из локального хранилища:", cacheError);
+    if (!db) {
+        console.log('Firebase недоступен, пытаемся загрузить цены из localStorage или использовать значения по умолчанию');
         pouchPrices = defaultPouchPrices;
-        document.getElementById("result").innerText = "Оффлайн: используются цены по умолчанию.";
-        console.log("Ошибка localStorage, используем defaultPouchPrices:", pouchPrices);
-      }
+        document.getElementById("result").innerText = "Firebase недоступен: используются цены по умолчанию.";
+        return;
     }
-  }
-  // Сохраняем цены в локальное хранилище для оффлайн-режима
-  localStorage.setItem("pouchPrices", JSON.stringify(pouchPrices));
+    try {
+        console.log('Загружаем цены из Firebase...');
+        const snapshot = await db.collection("pouchPrices").get();
+        pouchPrices = {};
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            pouchPrices[data.material] = data.prices;
+        });
+        console.log("Цены успешно загружены из Firebase:", pouchPrices);
+    } catch (error) {
+        console.error("Ошибка при загрузке цен из Firebase:", error);
+        if (navigator.onLine) {
+            document.getElementById("result").innerText = "Ошибка: не удалось загрузить цены. Проверьте подключение к интернету.";
+        } else {
+            document.getElementById("result").innerText = "Оффлайн: используются последние сохраненные цены.";
+            try {
+                const cachedPrices = localStorage.getItem("pouchPrices");
+                if (cachedPrices) {
+                    pouchPrices = JSON.parse(cachedPrices);
+                    console.log("Цены загружены из локального хранилища:", pouchPrices);
+                } else {
+                    pouchPrices = defaultPouchPrices;
+                    document.getElementById("result").innerText = "Оффлайн: используются цены по умолчанию.";
+                    console.log("Цены из localStorage не найдены, используем defaultPouchPrices:", pouchPrices);
+                }
+            } catch (cacheError) {
+                console.error("Ошибка при загрузке цен из локального хранилища:", cacheError);
+                pouchPrices = defaultPouchPrices;
+                document.getElementById("result").innerText = "Оффлайн: используются цены по умолчанию.";
+                console.log("Ошибка localStorage, используем defaultPouchPrices:", pouchPrices);
+            }
+        }
+    }
+    // Сохраняем цены в локальное хранилище для оффлайн-режима
+    localStorage.setItem("pouchPrices", JSON.stringify(pouchPrices));
 }
 
 // Функция для открытия редактора цен
@@ -443,6 +470,28 @@ function updateSizeOptions() {
     });
 }
 
+// Функция для переключения между предопределёнными и произвольными размерами
+function toggleSizeInput() {
+    const sizeType = document.getElementById("sizeType").value;
+    document.getElementById("predefinedSizeBlock").style.display = sizeType === "predefined" ? "block" : "none";
+    document.getElementById("customSizeBlock").style.display = sizeType === "custom" ? "block" : "none";
+}
+
+// Функция для расчета цены произвольного размера
+function calculateCustomPouchPrice(material, branding, width, height, quantity) {
+    const area = width * height; // Площадь в см²
+
+    // Коэффициенты количества
+    const quantityMultiplier = quantity >= 500 ? 0.9 : quantity >= 200 ? 0.95 : 1.0;
+    const minPrice = 50; // Минимальная наценка
+
+    const basePrice = basePricePerCm2[material]?.[branding] || 0.7; // Значение по умолчанию
+    let pricePerUnit = Math.max(area * basePrice * quantityMultiplier, minPrice);
+    pricePerUnit = Math.round(pricePerUnit); // Округляем до целого
+
+    return pricePerUnit * quantity;
+}
+
 // Функция для загрузки истории расчетов из Firestore
 async function loadHistory() {
     const historyList = document.getElementById("historyList");
@@ -557,7 +606,7 @@ async function clearHistory() {
 function calculatePouchPrice() {
     const pouchType = document.getElementById("pouchType").value;
     const brandingType = document.getElementById("brandingType").value;
-    const size = document.getElementById("size").value;
+    const sizeType = document.getElementById("sizeType").value;
     const quantityInput = document.getElementById("quantity").value;
     const quantity = parseInt(quantityInput);
 
@@ -578,24 +627,39 @@ function calculatePouchPrice() {
         return;
     }
 
-    let quantityCategory;
-    if (minQty === 50) {
-        if (quantity >= 500) quantityCategory = "500+";
-        else if (quantity >= 200) quantityCategory = "200-499";
-        else quantityCategory = "50-199";
+    let size, totalPrice, pricePerUnit;
+    if (sizeType === "predefined") {
+        size = document.getElementById("size").value;
+        const quantityCategory = minQty === 50 ?
+            (quantity >= 500 ? "500+" : quantity >= 200 ? "200-499" : "50-199") :
+            (quantity >= 500 ? "500+" : quantity >= 200 ? "200-499" : "100-199");
+
+        if (!pouchPrices[pouchType]?.[brandingType]?.[size]?.[quantityCategory]) {
+            document.getElementById("result").innerText = "Ошибка: цены для выбранных параметров не найдены.";
+            document.getElementById("calculationText").innerText = "";
+            document.getElementById("totalPriceText").innerText = "";
+            document.getElementById("copyButton").style.display = "none";
+            return;
+        }
+
+        pricePerUnit = pouchPrices[pouchType][brandingType][size][quantityCategory];
+        totalPrice = pricePerUnit * quantity;
     } else {
-        if (quantity >= 500) quantityCategory = "500+";
-        else if (quantity >= 200) quantityCategory = "200-499";
-        else quantityCategory = "100-199";
-    }
+        const width = parseFloat(document.getElementById("customWidth").value);
+        const height = parseFloat(document.getElementById("customHeight").value);
 
-    if (!pouchPrices[pouchType]?.[brandingType]?.[size]?.[quantityCategory]) {
-        document.getElementById("result").innerText = "Ошибка: цены для выбранных параметров не найдены.";
-        return;
-    }
+        if (isNaN(width) || isNaN(height) || width <= 0 || height <= 0) {
+            document.getElementById("result").innerText = "Ошибка: введите корректные размеры.";
+            document.getElementById("calculationText").innerText = "";
+            document.getElementById("totalPriceText").innerText = "";
+            document.getElementById("copyButton").style.display = "none";
+            return;
+        }
 
-    const pricePerUnit = pouchPrices[pouchType][brandingType][size][quantityCategory];
-    const totalPrice = pricePerUnit * quantity;
+        size = `${width}x${height}`;
+        totalPrice = calculateCustomPouchPrice(pouchType, brandingType, width, height, quantity);
+        pricePerUnit = Math.round(totalPrice / quantity);
+    }
 
     document.getElementById("result").innerText = `Итоговая цена: ${totalPrice} рублей`;
 
